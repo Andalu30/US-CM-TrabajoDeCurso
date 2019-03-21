@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".PantallaPrincipal">
+    android:layout_height="match_parent">
 
 
     <ScrollView
@@ -29,11 +28,9 @@
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
                 android:layout_height="170dp"
-                android:adjustViewBounds="true"
-                android:background="@drawable/plaza_espanya"
-                android:scaleType="centerInside"
-                tools:layout_editor_absoluteX="16dp"
-                tools:layout_editor_absoluteY="110dp" />
+                android:cropToPadding="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/plaza_espanya" />
 
             <TextView
                 android:id="@+id/proxres"
@@ -56,8 +53,8 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="160dp"
-                        android:background="@drawable/tennis"
-                        android:scaleType="fitXY" />
+                        android:src="@drawable/tennis"
+                        android:scaleType="centerCrop" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -111,8 +108,8 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="160dp"
-                        android:background="@drawable/tennis"
-                        android:scaleType="fitXY" />
+                        android:src="@drawable/tennis"
+                        android:scaleType="centerCrop" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -167,7 +164,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
                         android:scaleType="centerCrop"
-                        app:srcCompat="@color/colorPrimary" />
+                        android:src="@drawable/concert"/>
 
 
                     <TextView
