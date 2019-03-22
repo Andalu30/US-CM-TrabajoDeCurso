@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_1"
+        android:orderInCategory="100"
+        android:title="En este menu se pueden poner varias cosas"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_2"
+        android:orderInCategory="100"
+        android:title="Como esta"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_3"
+        android:orderInCategory="100"
+        android:title="Y esta"
+        app:showAsAction="never" />
+</menu>
