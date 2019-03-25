@@ -109,6 +109,8 @@ public class MainActivity extends AppCompatActivity
             fragment = new Fragment_informacion();
         } else if (pantalla == "reservas") {
             fragment = new Fragment_misReservas();
+        } else if (pantalla == "explorar") {
+            fragment = new Fragment_Explorar();
         } else {
             fragment = new Fragment_PantallaPrincipal();
         }
