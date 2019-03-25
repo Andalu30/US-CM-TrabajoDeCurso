@@ -7,7 +7,7 @@
 
 
     <ScrollView
-        android:id="@+id/scrollView"
+        android:id="@+id/scrollViewReservas"
         android:layout_width="410dp"
         android:layout_height="734dp"
         android:layout_marginStart="8dp"
@@ -33,7 +33,7 @@
                 android:src="@drawable/plaza_espanya" />
 
             <TextView
-                android:id="@+id/proxres"
+                android:id="@+id/txProximoEvento"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
@@ -41,6 +41,7 @@
                 android:textAppearance="@android:style/TextAppearance.Material.Large" />
 
             <android.support.v7.widget.CardView
+                android:id="@+id/cardProximoEvento"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp">
@@ -53,8 +54,8 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="160dp"
-                        android:src="@drawable/tennis"
-                        android:scaleType="centerCrop" />
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/tennis" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -189,6 +190,17 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <Switch
+        android:id="@+id/swNoProx"
+        android:layout_width="169dp"
+        android:layout_height="17dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginEnd="16dp"
+        android:layout_weight="1"
+        android:text="NoProximoEvento"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>
