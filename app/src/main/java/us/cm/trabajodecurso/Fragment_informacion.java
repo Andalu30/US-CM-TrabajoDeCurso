@@ -19,13 +19,6 @@ public class Fragment_informacion extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
-        view.findViewById(R.id.logoETSII).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(),"Hello there",Toast.LENGTH_SHORT);
-            }
-        });
     }
 }

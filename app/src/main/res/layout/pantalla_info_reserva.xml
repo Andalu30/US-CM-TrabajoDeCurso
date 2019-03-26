@@ -112,12 +112,14 @@
 
 
                             <Button
+                                android:id="@+id/botonCalendario"
                                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="Añadir al calendario" />
 
                             <Button
+                                android:id="@+id/botonGoogleMaps"
                                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
