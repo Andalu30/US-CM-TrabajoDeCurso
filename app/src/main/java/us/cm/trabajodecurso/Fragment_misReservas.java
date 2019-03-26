@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +32,8 @@ public class Fragment_misReservas extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
+
+        // DEBUG SWITCHES
         Switch swSinReservas = getView().findViewById(R.id.switchNoReserva);
         Switch swNoLogin = getView().findViewById(R.id.switchNoLogin);
         Switch swNoProx = getView().findViewById(R.id.switchProxima);
@@ -49,7 +53,7 @@ public class Fragment_misReservas extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    txProx.setVisibility(View.INVISIBLE);
+                    txProx.setVisibility(View.GONE);
                     cardProx.setVisibility(View.GONE);
                 } else {
                     txProx.setVisibility(View.VISIBLE);
@@ -63,12 +67,12 @@ public class Fragment_misReservas extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
 
-                    svReservas.setVisibility(View.INVISIBLE);
+                    svReservas.setVisibility(View.GONE);
                     btNoReservas.setVisibility(View.VISIBLE);
                     txNoReserva.setVisibility(View.VISIBLE);
 
-                    txNoLogin.setVisibility(View.INVISIBLE);
-                    btNologin.setVisibility(View.INVISIBLE);
+                    txNoLogin.setVisibility(View.GONE);
+                    btNologin.setVisibility(View.GONE);
 
                 }else{
                     svReservas.setVisibility(View.VISIBLE);
@@ -87,9 +91,9 @@ public class Fragment_misReservas extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
 
-                    svReservas.setVisibility(View.INVISIBLE);
-                    btNoReservas.setVisibility(View.INVISIBLE);
-                    txNoReserva.setVisibility(View.INVISIBLE);
+                    svReservas.setVisibility(View.GONE);
+                    btNoReservas.setVisibility(View.GONE);
+                    txNoReserva.setVisibility(View.GONE);
 
                     txNoLogin.setVisibility(View.VISIBLE);
                     btNologin.setVisibility(View.VISIBLE);
@@ -99,6 +103,49 @@ public class Fragment_misReservas extends Fragment {
                 }
             }
         });
+
+
+
+        // DEBUG SWITCHES}
+
+
+        Button bt_explorar = (Button) getView().findViewById(R.id.buttonNingunaReserva);
+        Button bt_login =  (Button) getView().findViewById(R.id.buttonNoLogin);
+        Button bt_verReservaProx = (Button) getView().findViewById(R.id.bt_verReservaProxima);
+
+
+
+        bt_explorar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = new Fragment_Explorar();
+                FragmentManager fragMan = getFragmentManager();
+                FragmentTransaction ft = fragMan.beginTransaction();
+                ft.replace(R.id.screenArea, fragment).addToBackStack("back").commit();
+            }
+        });
+
+        bt_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: implementar la llamada al fragment de Login
+                Fragment fragment = new Fragment_misReservas(); // Cambiar esto
+                FragmentManager fragMan = getFragmentManager();
+                FragmentTransaction ft = fragMan.beginTransaction();
+                ft.replace(R.id.screenArea, fragment).addToBackStack("back").commit();
+            }
+        });
+
+        bt_verReservaProx.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = new Fragment_info_reserva();
+                FragmentManager fragMan = getFragmentManager();
+                FragmentTransaction ft = fragMan.beginTransaction();
+                ft.replace(R.id.screenArea, fragment).addToBackStack("back").commit();
+            }
+        });
+
 
     }
 }

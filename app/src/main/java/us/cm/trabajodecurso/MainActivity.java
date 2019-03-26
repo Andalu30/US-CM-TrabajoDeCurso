@@ -111,13 +111,15 @@ public class MainActivity extends AppCompatActivity
             fragment = new Fragment_misReservas();
         } else if (pantalla == "explorar") {
             fragment = new Fragment_Explorar();
+        }else if (pantalla == "perfil") {
+            fragment = new Fragment_Perfil();
         } else {
             fragment = new Fragment_PantallaPrincipal();
         }
 
         FragmentManager fragMan = getSupportFragmentManager();
         FragmentTransaction ft = fragMan.beginTransaction();
-        ft.replace(R.id.screenArea, fragment).commit();
+        ft.replace(R.id.screenArea, fragment).addToBackStack("back").commit();
     }
 
 }
