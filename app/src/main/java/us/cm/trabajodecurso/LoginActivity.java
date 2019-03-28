@@ -3,6 +3,7 @@ package us.cm.trabajodecurso;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -46,6 +47,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Inicio de sesión");
+        actionBar.setDisplayHomeAsUpEnabled(true); //Activa boton atras
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -129,7 +135,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             // Welcome the user
             FirebaseUser user = authResult.getUser();
             Toast.makeText(this, "Welcome " + user.getEmail(), Toast.LENGTH_SHORT).show();
-
 
             // Go back to the main activity
             startActivity(new Intent(this, MainActivity.class));
@@ -239,10 +244,21 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+    }
+
+    @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
+    }
+    public boolean onSupportNavigateUp(){
+        finish();
+        finish();
+        return super.onSupportNavigateUp();
     }
 }

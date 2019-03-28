@@ -7,4 +7,7 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="title_activity_botton_navigation">bottonNavigation</string>
+    <string name="textoinfoapp">NADIM reservas es la culminación de un trabajo para la asignatura
+        Computación Movil
+        del grado de Ingeniería Informática de la Universidad de Sevilla</string>
 </resources>
