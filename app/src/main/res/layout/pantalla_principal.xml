@@ -28,7 +28,7 @@
                     android:layout_height="170dp"
                     android:cropToPadding="true"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/plaza_espanya" />
+                    android:src="@drawable/plaza_espanya_big" />
 
                 <TextView
                     android:id="@+id/txProximoEvento"

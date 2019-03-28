@@ -1,5 +1,6 @@
 package us.cm.trabajodecurso;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,9 +19,15 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import org.w3c.dom.Text;
 
 public class Fragment_misReservas extends Fragment {
+
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
 
     @Nullable
     @Override
@@ -128,11 +135,8 @@ public class Fragment_misReservas extends Fragment {
         bt_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: implementar la llamada al fragment de Login
-                Fragment fragment = new Fragment_misReservas(); // Cambiar esto
-                FragmentManager fragMan = getFragmentManager();
-                FragmentTransaction ft = fragMan.beginTransaction();
-                ft.replace(R.id.screenArea, fragment).addToBackStack("back").commit();
+                startActivity(new Intent(getContext(), LoginActivity.class));
+                return;
             }
         });
 
@@ -146,6 +150,37 @@ public class Fragment_misReservas extends Fragment {
             }
         });
 
+
+
+        // Initialize Firebase Auth
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+        if (mFirebaseUser == null) {
+            // Not signed in, launch the Sign In activity
+            this.NoLogueado();
+        }
+
+
+
+        }
+
+    private void NoLogueado() {
+        final ScrollView svReservas = getView().findViewById(R.id.scrollViewReservas);
+        final CardView cardProx = getView().findViewById(R.id.cardViewProxima);
+        final Button btNologin = getView().findViewById(R.id.buttonNoLogin);
+        final Button btNoReservas = getView().findViewById(R.id.buttonNingunaReserva);
+        final TextView txNoLogin = getView().findViewById(R.id.textoNoLogin);
+        final TextView txNoReserva = getView().findViewById(R.id.textoNingunaReserva);
+        final TextView txProx = getView().findViewById(R.id.proxres);
+
+
+        svReservas.setVisibility(View.GONE);
+        btNoReservas.setVisibility(View.GONE);
+        txNoReserva.setVisibility(View.GONE);
+
+        txNoLogin.setVisibility(View.VISIBLE);
+        btNologin.setVisibility(View.VISIBLE);
 
     }
 }

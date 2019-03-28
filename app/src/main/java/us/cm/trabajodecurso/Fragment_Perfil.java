@@ -1,5 +1,7 @@
 package us.cm.trabajodecurso;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,10 +14,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.concurrent.ExecutionException;
+
 public class Fragment_Perfil extends Fragment {
+
+    private String FirebaseUserNombre;
+    private String FirebaseUserEmail;
+    private String mPhotoUrl;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+    public static final String ANONYMOUS = "anonymous";
+
+
 
     @Nullable
     @Override
@@ -98,6 +115,50 @@ public class Fragment_Perfil extends Fragment {
             }
         });
 
+
+        // Initialize Firebase Auth
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+        if (mFirebaseUser == null) {
+            // Not signed in, launch the Sign In activity
+            startActivity(new Intent(this.getActivity(), LoginActivity.class));
+            this.getActivity().recreate();
+            return;
+        } else {
+            FirebaseUserNombre = mFirebaseUser.getDisplayName();
+            FirebaseUserEmail = mFirebaseUser.getEmail();
+            if (mFirebaseUser.getPhotoUrl() != null) {
+                mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+            }
+
+            //Cambiar datos header
+            TextView name = (TextView) view.findViewById(R.id.nombreUsuario_header);
+            TextView email = (TextView) view.findViewById(R.id.mailUsuario_header);
+            ImageView fotoperfil = (ImageView) view.findViewById(R.id.fotoPerfil);
+            Button loginheader = (Button) view.findViewById(R.id.bt_nav_login);
+            loginheader.setVisibility(View.GONE);
+
+
+            name.setText(FirebaseUserNombre);
+            email.setText(FirebaseUserEmail);
+
+
+            //Descargar imagen del usuario y colocarla
+            MainActivity.GetBitmapFromURLAsync getBitmapFromURLAsync = new MainActivity.GetBitmapFromURLAsync();
+            getBitmapFromURLAsync.execute(mPhotoUrl);
+            Bitmap imagenUsuario = null;
+            try {
+                imagenUsuario = getBitmapFromURLAsync.get();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            fotoperfil.setImageBitmap(imagenUsuario);
+
+
+        }
 
 
     }

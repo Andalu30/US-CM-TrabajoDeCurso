@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
@@ -36,6 +37,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private static final int RC_SIGN_IN = 9001;
 
     private SignInButton mSignInButton;
+    private ProgressBar progressfeedback;
 
 
 
@@ -44,6 +46,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
+        progressfeedback = (ProgressBar) findViewById(R.id.login_progressBar);
+        progressfeedback.setVisibility(View.GONE);
 
         // Assign fields
         mSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
@@ -69,6 +74,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
 
     private void signIn() {
+        progressfeedback.setVisibility(View.VISIBLE);
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -79,6 +85,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             // Welcome the user
             FirebaseUser user = authResult.getUser();
             Toast.makeText(this, "Welcome " + user.getEmail(), Toast.LENGTH_SHORT).show();
+
 
             // Go back to the main activity
             startActivity(new Intent(this, MainActivity.class));

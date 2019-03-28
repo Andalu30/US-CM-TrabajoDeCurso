@@ -18,13 +18,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Result;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity
 
     private String FirebaseUserNombre;
     private String FirebaseUserEmail;
-    private String mPhotoUrl;
+    private String FirebaseFotoPerfil;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -75,16 +75,41 @@ public class MainActivity extends AppCompatActivity
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
+
+
+        View header = navigationView.getHeaderView(0);
+        TextView name = (TextView) header.findViewById(R.id.nombreUsuario_header);
+        TextView email = (TextView) header.findViewById(R.id.mailUsuario_header);
+        ImageView fotoperfil = (ImageView) header.findViewById(R.id.fotoPerfil);
+        Button headerLogin = (Button) header.findViewById(R.id.bt_nav_login);
+
+        headerLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getBaseContext(), LoginActivity.class));
+                finish();
+            }
+        });
+
+
         if (mFirebaseUser == null) {
-            // Not signed in, launch the Sign In activity
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
-            return;
+
+            FirebaseUserNombre = ANONYMOUS;
+            FirebaseUserEmail = ANONYMOUS;
+            FirebaseFotoPerfil = null;
+            headerLogin.setVisibility(View.VISIBLE);
+
+
+//            // Not signed in, launch the Sign In activity
+//            startActivity(new Intent(this, LoginActivity.class));
+//            finish();
+//            return;
         } else {
+            headerLogin.setVisibility(View.GONE);
             FirebaseUserNombre = mFirebaseUser.getDisplayName();
             FirebaseUserEmail = mFirebaseUser.getEmail();
             if (mFirebaseUser.getPhotoUrl() != null) {
-                mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+                FirebaseFotoPerfil = mFirebaseUser.getPhotoUrl().toString();
             }
         }
 
@@ -95,10 +120,6 @@ public class MainActivity extends AppCompatActivity
 
 
         //Cambiar datos header
-        View header = navigationView.getHeaderView(0);
-        TextView name = (TextView) header.findViewById(R.id.nombreUsuario_header);
-        TextView email = (TextView) header.findViewById(R.id.mailUsuario_header);
-        ImageView fotoperfil = (ImageView) header.findViewById(R.id.fotoPerfil);
 
 
         name.setText(FirebaseUserNombre);
@@ -106,7 +127,7 @@ public class MainActivity extends AppCompatActivity
 
         //Descargar imagen del usuario y colocarla
         GetBitmapFromURLAsync getBitmapFromURLAsync = new GetBitmapFromURLAsync();
-        getBitmapFromURLAsync.execute(mPhotoUrl);
+        getBitmapFromURLAsync.execute(FirebaseFotoPerfil);
         Bitmap imagenUsuario = null;
         try {
             imagenUsuario = getBitmapFromURLAsync.get();
@@ -120,7 +141,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private class GetBitmapFromURLAsync extends AsyncTask<String, Void, Bitmap> {
+    public static class GetBitmapFromURLAsync extends AsyncTask<String, Void, Bitmap> {
         @Override
         protected Bitmap doInBackground(String... params) {
             return getBitmapFromURL(params[0]);
@@ -172,9 +193,9 @@ public class MainActivity extends AppCompatActivity
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                 mFirebaseUser = null;
                 FirebaseUserNombre = ANONYMOUS;
-                mPhotoUrl = null;
-                startActivity(new Intent(this, LoginActivity.class));
-                finish();
+                FirebaseFotoPerfil = null;
+//                startActivity(new Intent(this, LoginActivity.class));
+                this.recreate();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
