@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,15 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Fragment_PantallaPrincipal extends Fragment {
 
@@ -69,6 +79,65 @@ public class Fragment_PantallaPrincipal extends Fragment {
                 ft.replace(R.id.screenArea, fragment).addToBackStack("back").commit();
             }
         });
+
+
+
+//        // Write a message to the database
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference("usuarios/test");
+//
+//        myRef.setValue("Hello, World!");
+//
+//
+//        DatabaseReference myRef2 = database.getReference("usuarios/anotherOne");
+//        myRef2.setValue("Hello, World!");
+//
+// Read from the database
+
+
+        // Read a message to the database
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("reservas");
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                Map<String, Object> reservas = (HashMap<String, Object>) dataSnapshot.getValue();
+
+                Map<String, Object> reserva1 = (Map<String, Object>) reservas.get("reserva1");
+
+                String descripcion = reserva1.get("descripcion").toString();
+                String fecha = reserva1.get("fecha").toString();
+                String disponibilidad = reserva1.get("disponibilidad").toString();
+                String ubicacion = reserva1.get("ubicacion").toString();
+                String horario = reserva1.get("horario").toString();
+                String titulo = reserva1.get("titulo").toString();
+                String id = reserva1.get("id").toString();
+
+
+
+                Log.d("DB",
+                        id+" "+titulo+" "+descripcion+" "+horario+" "+ubicacion+" "+fecha+" "+disponibilidad);
+
+                TextView cardTit = getView().findViewById(R.id.pprincipal_proxev_tit);
+                TextView carddesc = getView().findViewById(R.id.pprincipal_proxev_descrip);
+
+                cardTit.setText(titulo);
+                carddesc.setText(descripcion);
+
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("DB", "Failed to read value.", error.toException());
+            }
+        });
+
 
 
     }

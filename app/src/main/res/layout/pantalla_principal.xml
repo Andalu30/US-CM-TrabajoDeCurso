@@ -62,6 +62,7 @@
                             android:padding="16dp">
 
                             <TextView
+                                android:id="@+id/pprincipal_proxev_tit"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="8dp"
@@ -70,6 +71,7 @@
                                 android:textSize="18sp" />
 
                             <TextView
+                                android:id="@+id/pprincipal_proxev_descrip"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="Reserva de la pista de tenis numero 2 del SADUS Bermejales"
