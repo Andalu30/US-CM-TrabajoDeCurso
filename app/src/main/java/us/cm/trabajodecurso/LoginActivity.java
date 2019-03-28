@@ -6,7 +6,10 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -30,7 +33,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         View.OnClickListener {
 
     // Firebase instance variables
-    private FirebaseAuth mFirebaseAuth;
+    private FirebaseAuth mAuth;
     private GoogleApiClient mGoogleApiClient;
 
     private static final String TAG = "SignInActivity";
@@ -50,6 +53,35 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         progressfeedback = (ProgressBar) findViewById(R.id.login_progressBar);
         progressfeedback.setVisibility(View.GONE);
 
+
+        Button emailpassloginbutt = findViewById(R.id.emailpassloginbutt);
+        emailpassloginbutt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String mail = ((EditText) findViewById(R.id.loginMail)).getText().toString();
+                String pass = ((EditText) findViewById(R.id.loginpass)).getText().toString();
+
+                if (checkPass(mail,pass))
+                    firebaseAuthContraseñaMailLogin(mail, pass);
+            }
+        });
+
+        TextView infoCreaCuenta = (TextView) findViewById(R.id.infoCreacuenta);
+        infoCreaCuenta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String mail = ((EditText) findViewById(R.id.loginMail)).getText().toString();
+                String pass = ((EditText) findViewById(R.id.loginpass)).getText().toString();
+
+                if (checkPass(mail, pass)){
+                    firebaseAuthContraseñaMailLogin(mail,pass);
+                }
+            }
+        });
+
+
+        //Firebase
+
         // Assign fields
         mSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
 
@@ -68,13 +100,25 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
 
         // Initialize FirebaseAuth
-        mFirebaseAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
     }
 
 
+    private boolean checkPass(String mail, String pass) {
+        if (!mail.isEmpty() && pass.length()>=8)
+            return true;
+        else
+        if (mail.isEmpty())
+            ((EditText) findViewById(R.id.loginMail)).setError("El mail no puede estar vacio");
+        if (pass.isEmpty())
+            ((EditText) findViewById(R.id.loginpass)).setError("La contraseña no puede estar vacia");
+        if (pass.length()<8)
+            ((EditText) findViewById(R.id.loginpass)).setError("La logitud de la contraseña tiene que ser mayor de 8 caracteres");
+        return false;
+    }
+
     private void signIn() {
-        progressfeedback.setVisibility(View.VISIBLE);
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -96,6 +140,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         switch (v.getId()) {
             case R.id.sign_in_button:
                 Log.i("SignIn","SignIn button pressed");
+                progressfeedback.setVisibility(View.VISIBLE);
                 signIn();
                 break;
         }
@@ -120,10 +165,59 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
 
+    private void firebaseAuthContraseñaMailLogin(String email, String password){
+        progressfeedback.setVisibility(View.VISIBLE);
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            handleFirebaseAuthResult(task.getResult());
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "No se ha podido iniciar sesión.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        // ...
+                    }
+                });
+    }
+
+    private void firebaseAuthContraseñaMailCreate(final String email, String password){
+        progressfeedback.setVisibility(View.VISIBLE);
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "createUserWithEmail:success");
+                            Toast.makeText(LoginActivity.this, "Se ha creado la cuenta para "+email,
+                                    Toast.LENGTH_SHORT).show();
+
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "No se ha podido crear la cuenta",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        progressfeedback.setVisibility(View.VISIBLE);
         Log.d(TAG, "firebaseAuthWithGooogle:" + acct.getId());
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mFirebaseAuth.signInWithCredential(credential)
+        mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {

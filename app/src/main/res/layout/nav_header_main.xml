@@ -28,7 +28,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/colorAccent"
-        android:text="Iniciar sesión" />
+        android:text="Iniciar sesión"
+        android:textColor="@android:color/white" />
 
     <TextView
         android:id="@+id/nombreUsuario_header"
