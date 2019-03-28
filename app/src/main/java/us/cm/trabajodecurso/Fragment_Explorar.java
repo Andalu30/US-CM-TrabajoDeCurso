@@ -23,6 +23,7 @@ public class Fragment_Explorar extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        ((MainActivity) getActivity()).setToolBarTitle("Explorar");
         return inflater.inflate(R.layout.pantalla_explorar,null);
 
     }
@@ -33,6 +34,7 @@ public class Fragment_Explorar extends Fragment {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            //Este es el metodo que cambia el contenido de la pantalla al cambiar de pestaña
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     mTextMessage.setText("Deportes");

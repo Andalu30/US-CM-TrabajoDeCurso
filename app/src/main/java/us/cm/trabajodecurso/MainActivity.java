@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity
     private String FirebaseUserNombre;
     private String FirebaseUserEmail;
     private String FirebaseFotoPerfil;
+    public MenuItem menuCerrarSesion;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -67,6 +69,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        menuCerrarSesion = (MenuItem) findViewById(R.id.bt_cerrarSesion);
+
         cambiaFragment("inicio");
 
 
@@ -86,8 +90,8 @@ public class MainActivity extends AppCompatActivity
         headerLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getBaseContext(), LoginActivity.class));
                 finish();
+                startActivity(new Intent(getBaseContext(), LoginActivity.class));
             }
         });
 
@@ -98,6 +102,7 @@ public class MainActivity extends AppCompatActivity
             FirebaseUserEmail = ANONYMOUS;
             FirebaseFotoPerfil = null;
             headerLogin.setVisibility(View.VISIBLE);
+
 
 
 //            // Not signed in, launch the Sign In activity
@@ -120,8 +125,6 @@ public class MainActivity extends AppCompatActivity
 
 
         //Cambiar datos header
-
-
         name.setText(FirebaseUserNombre);
         email.setText(FirebaseUserEmail);
 
@@ -188,13 +191,14 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.cerrarSesion:
+            case R.id.bt_cerrarSesion:
                 mFirebaseAuth.signOut();
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                 mFirebaseUser = null;
                 FirebaseUserNombre = ANONYMOUS;
                 FirebaseFotoPerfil = null;
 //                startActivity(new Intent(this, LoginActivity.class));
+                Toast.makeText(this,"Se ha cerrado la sesión", Toast.LENGTH_LONG);
                 this.recreate();
                 return true;
             default:
@@ -220,10 +224,10 @@ public class MainActivity extends AppCompatActivity
             cambiaFragment("explorar");
         } else if (id == R.id.nav_notificaciones) {
             cambiaFragment("notificaciones");
-        } else if (id == R.id.nav_ajustes) {
-            cambiaFragment("ajustes");
         } else if (id == R.id.nav_info) {
-            cambiaFragment("info");
+            startActivity(new Intent(this, InfoActivity.class));
+        } else if (id == R.id.nav_ajustes) {
+            startActivity(new Intent(this, AjustesActivity.class));
         }
 
 
@@ -259,4 +263,7 @@ public class MainActivity extends AppCompatActivity
         Log.d("Fallo conexion", "onConnectionFailed:" + connectionResult);
     }
 
+    public void setToolBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
 }

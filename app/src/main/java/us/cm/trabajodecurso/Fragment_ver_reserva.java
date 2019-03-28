@@ -13,14 +13,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import java.util.Calendar;
-import java.util.Locale;
 
-public class Fragment_info_reserva extends Fragment {
+public class Fragment_ver_reserva extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.pantalla_info_reserva,null);
+        ((MainActivity) getActivity()).setToolBarTitle("Información de la reserva");
+        return inflater.inflate(R.layout.pantalla_ver_reserva,null);
     }
 
     @Override

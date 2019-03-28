@@ -13,16 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import org.w3c.dom.Text;
 
 public class Fragment_misReservas extends Fragment {
 
@@ -32,6 +28,8 @@ public class Fragment_misReservas extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        ((MainActivity) getActivity()).setToolBarTitle("Mis reservas");
+
         return inflater.inflate(R.layout.pantalla_misreservas,null);
 
     }
@@ -143,7 +141,7 @@ public class Fragment_misReservas extends Fragment {
         bt_verReservaProx.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fragment = new Fragment_info_reserva();
+                Fragment fragment = new Fragment_ver_reserva();
                 FragmentManager fragMan = getFragmentManager();
                 FragmentTransaction ft = fragMan.beginTransaction();
                 ft.replace(R.id.screenArea, fragment).addToBackStack("back").commit();

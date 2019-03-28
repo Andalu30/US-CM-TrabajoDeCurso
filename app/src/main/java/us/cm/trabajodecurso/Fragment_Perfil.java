@@ -37,11 +37,13 @@ public class Fragment_Perfil extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        ((MainActivity) getActivity()).setToolBarTitle("Mi perfil");
         return inflater.inflate(R.layout.pantalla_perfil,null);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
 
         Switch swNoprox = (Switch) getView().findViewById(R.id.swNoProx);
         Switch swNoOtras = getView().findViewById(R.id.swNoOtras);
@@ -108,7 +110,7 @@ public class Fragment_Perfil extends Fragment {
         btProxReserva.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fragment = new Fragment_info_reserva();
+                Fragment fragment = new Fragment_ver_reserva();
                 FragmentManager fragMan = getFragmentManager();
                 FragmentTransaction ft = fragMan.beginTransaction();
                 ft.replace(R.id.screenArea, fragment).addToBackStack("back").commit();
@@ -156,10 +158,10 @@ public class Fragment_Perfil extends Fragment {
                 e.printStackTrace();
             }
             fotoperfil.setImageBitmap(imagenUsuario);
-
-
         }
 
-
     }
+
+
+
 }
