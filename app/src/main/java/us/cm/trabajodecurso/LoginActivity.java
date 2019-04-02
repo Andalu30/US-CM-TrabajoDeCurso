@@ -94,6 +94,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         // Set click listeners
         mSignInButton.setOnClickListener(this);
 
+        //TODO: QUITAR LA STRING ID, NO SOLO COMERTARLA!!!!
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -257,7 +258,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
     public boolean onSupportNavigateUp(){
-        finish();
         finish();
         return super.onSupportNavigateUp();
     }
