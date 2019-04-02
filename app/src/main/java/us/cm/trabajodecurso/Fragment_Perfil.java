@@ -118,6 +118,8 @@ public class Fragment_Perfil extends Fragment {
         });
 
 
+
+
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
@@ -125,7 +127,6 @@ public class Fragment_Perfil extends Fragment {
         if (mFirebaseUser == null) {
             // Not signed in, launch the Sign In activity
             startActivity(new Intent(this.getActivity(), LoginActivity.class));
-            this.getActivity().recreate();
             return;
         } else {
             FirebaseUserNombre = mFirebaseUser.getDisplayName();

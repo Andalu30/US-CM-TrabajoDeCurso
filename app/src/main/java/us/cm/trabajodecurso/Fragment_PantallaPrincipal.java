@@ -102,6 +102,8 @@ public class Fragment_PantallaPrincipal extends Fragment {
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("DB","On data change llamado");
+
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
                 Map<String, Object> reservas = (HashMap<String, Object>) dataSnapshot.getValue();
@@ -115,7 +117,6 @@ public class Fragment_PantallaPrincipal extends Fragment {
                 String horario = reserva1.get("horario").toString();
                 String titulo = reserva1.get("titulo").toString();
                 String id = reserva1.get("id").toString();
-
 
 
                 Log.d("DB",
