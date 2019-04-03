@@ -2,7 +2,6 @@ package us.cm.trabajodecurso;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,10 +29,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class Fragment_misReservas extends Fragment {
 
@@ -42,6 +39,10 @@ public class Fragment_misReservas extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    private final FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+    private List<Reserva> datasetReservas = new ArrayList<>();
+
 
 
     @Nullable
@@ -68,10 +69,10 @@ public class Fragment_misReservas extends Fragment {
 
         final Button btNologin = getView().findViewById(R.id.buttonNoLogin);
         final Button btNoReservas = getView().findViewById(R.id.buttonNingunaReserva);
-
-        final TextView txNoLogin = getView().findViewById(R.id.textoNoLogin);
         final TextView txNoReserva = getView().findViewById(R.id.textoNingunaReserva);
+
         final TextView txProx = getView().findViewById(R.id.proxres);
+        final TextView txNoLogin = getView().findViewById(R.id.textoNoLogin);
 
         swNoProx.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -181,26 +182,27 @@ public class Fragment_misReservas extends Fragment {
 
 
 
-        // Read de la DB
 
 
-        final List<Long> reservas_del_usuario = new ArrayList<>();
+        // Numeros de las reservas del usuario
 
-
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference db_reserv_user = database.getReference("/usuarios/andalu30/susreservas");
+        //TODO: El usuario esta hardcodeado
+        DatabaseReference db_reserv_user = database.getReference("/usuarios/andalu30" +
+                "/susreservas");
 
         db_reserv_user.addListenerForSingleValueEvent(new ValueEventListener() {
+
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<Long> test = (List<Long>) dataSnapshot.getValue();
-                for (Long x:test) {
-                    Log.i("DB","resIndiv: "+x);
-                    reservas_del_usuario.add(reservas_del_usuario.size(),x);
-                }
+                List<Long> numsReservas = (List<Long>) dataSnapshot.getValue();
 
-                Log.i("DB",test.toString());
-          }
+                if (numsReservas == null)
+                    ningunaReserva();
+                else
+                    getInformacionReservasUsuario(numsReservas);
+
+
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -208,20 +210,62 @@ public class Fragment_misReservas extends Fragment {
             }
         });
 
-        Log.i("DB","reservas del usuario="+reservas_del_usuario);
 
-        for (Long k : reservas_del_usuario) {
-            System.out.println(k);
-            Log.i("RESERVAUSER","Vamos por la reserva:"+k);
+        //rellenaOtrasReservas();
 
-            //Get info de las reservas del usuario
-            DatabaseReference db_reserva_ind = database.getReference("/reservas/"+k);
 
-            db_reserva_ind.addValueEventListener(new ValueEventListener() {
+
+    }
+
+
+//    private void rellenaOtrasReservas(){
+//
+//        recyclerView = (RecyclerView) this.getView().findViewById(R.id.pmisreservas_recycler);
+//
+//        // use this setting to improve performance if you know that changes
+//        // in content do not change the layout size of the RecyclerView
+//        recyclerView.setHasFixedSize(true);
+//
+//        // use a linear layout manager
+//        layoutManager = new LinearLayoutManager(this.getContext());
+//        recyclerView.setLayoutManager(layoutManager);
+//
+//        // specify an adapter (see also next example)
+//        String[] mydataset = {"Titulo", "Descripcion", "Titulo", "Descripcion", "Titulo", "Descripcion", "Titulo", "Descripcion", "Titulo", "Descripcion", "Titulo", "Descripcion"};
+//        mAdapter = new MyAdapter(mydataset);
+//        recyclerView.setAdapter(mAdapter);
+//    }
+
+
+    private void getInformacionReservasUsuario(List<Long> reservas) {
+        Log.i("DB", "numeros reservas usuario: "+reservas);
+
+        final List<Map<String, Object>> infoReservas = new ArrayList<>();
+
+        for (Long numReserva:reservas) {
+
+            // Numeros de las reservas del usuario
+
+            DatabaseReference db_reserv_user = database.getReference("/reservas/"+numReserva);
+
+            db_reserv_user.addValueEventListener(new ValueEventListener() {
+
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    Log.i("DB",map.toString());
 
-                    Log.i("DB",dataSnapshot.getValue().toString());
+
+                    String titulo = (String) map.get("titulo");
+                    String descripcion = (String) map.get("descripcion");
+                    String horario = (String) map.get("horario");
+                    String ubicacion = (String) map.get("ubicacion");
+                    String fecha = (String) map.get("fecha");
+
+                    Reserva reserva = new Reserva(titulo, descripcion, horario,ubicacion, fecha);
+
+
+                    dibujaReservas(reserva);
                 }
 
                 @Override
@@ -233,15 +277,18 @@ public class Fragment_misReservas extends Fragment {
         }
 
 
+        Log.i("INFO",datasetReservas.toString());
+    }
+
+
+    private void dibujaReservas(Reserva reserva){
 
 
 
 
 
 
-
-
-        recyclerView = (RecyclerView) view.findViewById(R.id.pmisreservas_recycler);
+        recyclerView = (RecyclerView) this.getView().findViewById(R.id.pmisreservas_recycler);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -251,24 +298,32 @@ public class Fragment_misReservas extends Fragment {
         layoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(layoutManager);
 
+        datasetReservas.add(reserva);
+
         // specify an adapter (see also next example)
-        String[] mydataset = {"Titulo","Descripcion","Titulo","Descripcion","Titulo","Descripcion","Titulo","Descripcion","Titulo","Descripcion","Titulo","Descripcion"};
-        mAdapter = new MyAdapter(mydataset);
+        mAdapter = new MyAdapterReserva(datasetReservas);
         recyclerView.setAdapter(mAdapter);
 
+    }
 
 
+    private void ningunaReserva() {
+        final ScrollView svReservas = getView().findViewById(R.id.scrollViewReservas);
+        final Button btNologin = getView().findViewById(R.id.buttonNoLogin);
+        final Button btNoReservas = getView().findViewById(R.id.buttonNingunaReserva);
+        final TextView txNoReserva = getView().findViewById(R.id.textoNingunaReserva);
+        final TextView txNoLogin = getView().findViewById(R.id.textoNoLogin);
 
 
+        svReservas.setVisibility(View.GONE);
+        btNoReservas.setVisibility(View.VISIBLE);
+        txNoReserva.setVisibility(View.VISIBLE);
+
+        txNoLogin.setVisibility(View.GONE);
+        btNologin.setVisibility(View.GONE);
+    }
 
 
-
-
-
-
-
-
-        }
 
     private void NoLogueado() {
         final ScrollView svReservas = getView().findViewById(R.id.scrollViewReservas);
