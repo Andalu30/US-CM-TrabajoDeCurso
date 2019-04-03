@@ -2,12 +2,16 @@ package us.cm.trabajodecurso;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +23,26 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Fragment_misReservas extends Fragment {
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+
 
     @Nullable
     @Override
@@ -161,6 +180,66 @@ public class Fragment_misReservas extends Fragment {
 
 
 
+
+        // Read de la DB
+
+
+        final List<Long> reservas_del_usuario = new ArrayList<>();
+
+
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference db_reserv_user = database.getReference("/usuarios/andalu30/susreservas");
+
+        db_reserv_user.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Long> test = (List<Long>) dataSnapshot.getValue();
+                for (Long x:test) {
+                    reservas_del_usuario.add(x);
+                }
+
+                Log.i("DB",test.toString());
+          }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("DB", "No se ha podido acceder a las reservas del usuario");
+            }
+        });
+
+        Log.i("DB",reservas_del_usuario.toString());
+
+
+
+
+
+        recyclerView = (RecyclerView) view.findViewById(R.id.pmisreservas_recycler);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        recyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        layoutManager = new LinearLayoutManager(this.getContext());
+        recyclerView.setLayoutManager(layoutManager);
+
+        // specify an adapter (see also next example)
+        String[] mydataset = {"Titulo","Descripcion"};
+        mAdapter = new MyAdapter(mydataset);
+        recyclerView.setAdapter(mAdapter);
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
 
     private void NoLogueado() {
@@ -181,4 +260,5 @@ public class Fragment_misReservas extends Fragment {
         btNologin.setVisibility(View.VISIBLE);
 
     }
+
 }

@@ -84,11 +84,6 @@ public class Fragment_PantallaPrincipal extends Fragment {
 
 
 
-        //Script para llenar la DB
-
-        
-
-
 //        // Write a message to the database
 //        FirebaseDatabase database = FirebaseDatabase.getInstance();
 //        DatabaseReference myRef = database.getReference("usuarios/test");
@@ -111,28 +106,28 @@ public class Fragment_PantallaPrincipal extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("DB","On data change llamado");
-
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                Map<String, Object> reservas = (HashMap<String, Object>) dataSnapshot.getValue();
-
-                Map<String, Object> reserva1 = (Map<String, Object>) reservas.get("reserva1");
-
-                String descripcion = reserva1.get("descripcion").toString();
-                String fecha = reserva1.get("fecha").toString();
-                String disponibilidad = reserva1.get("disponibilidad").toString();
-                String horario = reserva1.get("horario").toString();
-                String titulo = reserva1.get("titulo").toString();
-                String id = reserva1.get("id").toString();
-
-
-                Log.d("DB",id+" "+titulo+" "+descripcion+" "+horario+" "+fecha+" "+disponibilidad);
-
-                TextView cardTit = getView().findViewById(R.id.pprincipal_proxev_tit);
-                TextView carddesc = getView().findViewById(R.id.pprincipal_proxev_descrip);
-
-                cardTit.setText(titulo);
-                carddesc.setText(descripcion);
+//
+//                // This method is called once with the initial value and again
+//                // whenever data at this location is updated.
+//                Map<String, Object> reservas = (HashMap<String, Object>) dataSnapshot.getValue();
+//
+//                Map<String, Object> reserva1 = (Map<String, Object>) reservas.get("reserva1");
+//
+//                String descripcion = reserva1.get("descripcion").toString();
+//                String fecha = reserva1.get("fecha").toString();
+//                String disponibilidad = reserva1.get("disponibilidad").toString();
+//                String horario = reserva1.get("horario").toString();
+//                String titulo = reserva1.get("titulo").toString();
+//                String id = reserva1.get("id").toString();
+//
+//
+//                Log.d("DB",id+" "+titulo+" "+descripcion+" "+horario+" "+fecha+" "+disponibilidad);
+//
+//                TextView cardTit = getView().findViewById(R.id.pprincipal_proxev_tit);
+//                TextView carddesc = getView().findViewById(R.id.pprincipal_proxev_descrip);
+//
+//                cardTit.setText(titulo);
+//                carddesc.setText(descripcion);
 
 
 
