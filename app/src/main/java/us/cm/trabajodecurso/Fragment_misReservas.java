@@ -195,7 +195,8 @@ public class Fragment_misReservas extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Long> test = (List<Long>) dataSnapshot.getValue();
                 for (Long x:test) {
-                    reservas_del_usuario.add(x);
+                    Log.i("DB","resIndiv: "+x);
+                    reservas_del_usuario.add(reservas_del_usuario.size(),x);
                 }
 
                 Log.i("DB",test.toString());
@@ -207,7 +208,34 @@ public class Fragment_misReservas extends Fragment {
             }
         });
 
-        Log.i("DB",reservas_del_usuario.toString());
+        Log.i("DB","reservas del usuario="+reservas_del_usuario);
+
+        for (Long k : reservas_del_usuario) {
+            System.out.println(k);
+            Log.i("RESERVAUSER","Vamos por la reserva:"+k);
+
+            //Get info de las reservas del usuario
+            DatabaseReference db_reserva_ind = database.getReference("/reservas/"+k);
+
+            db_reserva_ind.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    Log.i("DB",dataSnapshot.getValue().toString());
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.e("DB", "No se ha podido acceder a la informacion de la reserva");
+                }
+            });
+
+        }
+
+
+
+
+
 
 
 
@@ -224,7 +252,7 @@ public class Fragment_misReservas extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        String[] mydataset = {"Titulo","Descripcion"};
+        String[] mydataset = {"Titulo","Descripcion","Titulo","Descripcion","Titulo","Descripcion","Titulo","Descripcion","Titulo","Descripcion","Titulo","Descripcion"};
         mAdapter = new MyAdapter(mydataset);
         recyclerView.setAdapter(mAdapter);
 

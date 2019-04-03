@@ -65,8 +65,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         // - replace the contents of the view with that element
 
 
-        holder.tituloItemList.setText(mDataset[0]);
-        holder.descripItemList.setText(mDataset[1]);
+        holder.tituloItemList.setText("Titulo de la reserva"+position);
+        holder.descripItemList.setText("Descripcion de la reserva"+position);
 
     }
 
