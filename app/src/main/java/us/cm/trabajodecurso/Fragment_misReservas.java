@@ -170,6 +170,15 @@ public class Fragment_misReservas extends Fragment {
 
 
 
+        btNoReservas.setVisibility(View.GONE);
+        txNoReserva.setVisibility(View.GONE);
+
+        txNoLogin.setVisibility(View.GONE);
+        btNologin.setVisibility(View.GONE);
+
+
+
+
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
@@ -180,15 +189,15 @@ public class Fragment_misReservas extends Fragment {
         }
 
 
-
+        Log.i("USER",mFirebaseUser.getUid());
 
 
 
         // Numeros de las reservas del usuario
 
         //TODO: El usuario esta hardcodeado
-        DatabaseReference db_reserv_user = database.getReference("/usuarios/andalu30" +
-                "/susreservas");
+
+        DatabaseReference db_reserv_user = database.getReference("/usuarios/"+mFirebaseUser.getUid()+"/susreservas");
 
         db_reserv_user.addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -243,7 +252,9 @@ public class Fragment_misReservas extends Fragment {
         final List<Map<String, Object>> infoReservas = new ArrayList<>();
 
         for (Long numReserva:reservas) {
-
+            if (numReserva == 0){
+                continue;
+            }
             // Numeros de las reservas del usuario
 
             DatabaseReference db_reserv_user = database.getReference("/reservas/"+numReserva);
@@ -282,12 +293,6 @@ public class Fragment_misReservas extends Fragment {
 
 
     private void dibujaReservas(Reserva reserva){
-
-
-
-
-
-
         recyclerView = (RecyclerView) this.getView().findViewById(R.id.pmisreservas_recycler);
 
         // use this setting to improve performance if you know that changes
