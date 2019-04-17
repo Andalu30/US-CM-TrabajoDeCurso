@@ -12,6 +12,8 @@
         <activity android:name=".InfoActivity"></activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".AjustesActivity" />
+        <activity android:name=".VerReservaActivity" />
+
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"

@@ -14,30 +14,12 @@ import java.util.Map;
 
 public class MyAdapterReserva extends RecyclerView.Adapter<MyAdapterReserva.MyViewHolder> {
     private List<Reserva> mDataset;
-
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
-        public CardView cardItemList;
-        public ImageView imagenItemList;
-        public TextView tituloItemList;
-        public TextView descripItemList;
-
-
-        public MyViewHolder(View itemView) {
-            super(itemView);
-            cardItemList = itemView.findViewById(R.id.list_item_card);
-            imagenItemList = itemView.findViewById(R.id.list_item_image);
-            tituloItemList = itemView.findViewById(R.id.list_item_titulo);
-            descripItemList = itemView.findViewById(R.id.list_item_descripcion);
-        }
-    }
+    private OnReservaListener mOnReservaListener;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapterReserva(List<Reserva> myDataset) {
+    public MyAdapterReserva(List<Reserva> myDataset, OnReservaListener onReservaListener) {
         mDataset = myDataset;
+        this.mOnReservaListener = onReservaListener;
     }
 
     // Create new views (invoked by the layout manager)
@@ -53,10 +35,9 @@ public class MyAdapterReserva extends RecyclerView.Adapter<MyAdapterReserva.MyVi
 
 
 
-        MyViewHolder vh = new MyViewHolder(v);
+        MyViewHolder vh = new MyViewHolder(v,mOnReservaListener);
         return vh;
     }
-
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
@@ -73,4 +54,36 @@ public class MyAdapterReserva extends RecyclerView.Adapter<MyAdapterReserva.MyVi
     public int getItemCount() {
         return mDataset.size();
     }
+
+
+    public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        // each data item is just a string in this case
+        public CardView cardItemList;
+        public ImageView imagenItemList;
+        public TextView tituloItemList;
+        public TextView descripItemList;
+
+        OnReservaListener onReservaListener;
+
+
+        public MyViewHolder(View itemView, OnReservaListener onReservaListener) {
+            super(itemView);
+            cardItemList = itemView.findViewById(R.id.list_item_card);
+            imagenItemList = itemView.findViewById(R.id.list_item_image);
+            tituloItemList = itemView.findViewById(R.id.list_item_titulo);
+            descripItemList = itemView.findViewById(R.id.list_item_descripcion);
+            this.onReservaListener = onReservaListener;
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            onReservaListener.onReservaClick(getAdapterPosition());
+        }
+    }
+
+    public interface OnReservaListener{
+        void onReservaClick(int position);
+    }
+
 }

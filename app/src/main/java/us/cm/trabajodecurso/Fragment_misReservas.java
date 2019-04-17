@@ -32,7 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Fragment_misReservas extends Fragment {
+import static android.support.constraint.Constraints.TAG;
+
+public class Fragment_misReservas extends Fragment implements MyAdapterReserva.OnReservaListener{
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -205,7 +207,7 @@ public class Fragment_misReservas extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Long> numsReservas = (List<Long>) dataSnapshot.getValue();
 
-                if (numsReservas == null)
+                if (numsReservas == null || numsReservas.size()==1) //O no hay o es la nula (reserva 0)
                     ningunaReserva();
                 else
                     getInformacionReservasUsuario(numsReservas);
@@ -218,32 +220,8 @@ public class Fragment_misReservas extends Fragment {
                 Log.e("DB", "No se ha podido acceder a las reservas del usuario");
             }
         });
-
-
-        //rellenaOtrasReservas();
-
-
-
     }
 
-
-//    private void rellenaOtrasReservas(){
-//
-//        recyclerView = (RecyclerView) this.getView().findViewById(R.id.pmisreservas_recycler);
-//
-//        // use this setting to improve performance if you know that changes
-//        // in content do not change the layout size of the RecyclerView
-//        recyclerView.setHasFixedSize(true);
-//
-//        // use a linear layout manager
-//        layoutManager = new LinearLayoutManager(this.getContext());
-//        recyclerView.setLayoutManager(layoutManager);
-//
-//        // specify an adapter (see also next example)
-//        String[] mydataset = {"Titulo", "Descripcion", "Titulo", "Descripcion", "Titulo", "Descripcion", "Titulo", "Descripcion", "Titulo", "Descripcion", "Titulo", "Descripcion"};
-//        mAdapter = new MyAdapter(mydataset);
-//        recyclerView.setAdapter(mAdapter);
-//    }
 
 
     private void getInformacionReservasUsuario(List<Long> reservas) {
@@ -272,8 +250,12 @@ public class Fragment_misReservas extends Fragment {
                     String horario = (String) map.get("horario");
                     String ubicacion = (String) map.get("ubicacion");
                     String fecha = (String) map.get("fecha");
+                    String centro = (String) map.get("centro");
+                    String disponibilidad = (String) map.get("disponibilidad");
+                    String tipo = (String) map.get("tipo");
 
-                    Reserva reserva = new Reserva(titulo, descripcion, horario,ubicacion, fecha);
+
+                    Reserva reserva = new Reserva(titulo, descripcion, horario,ubicacion, fecha, centro, disponibilidad, tipo);
 
 
                     dibujaReservas(reserva);
@@ -306,7 +288,7 @@ public class Fragment_misReservas extends Fragment {
         datasetReservas.add(reserva);
 
         // specify an adapter (see also next example)
-        mAdapter = new MyAdapterReserva(datasetReservas);
+        mAdapter = new MyAdapterReserva(datasetReservas,this);
         recyclerView.setAdapter(mAdapter);
 
     }
@@ -328,8 +310,6 @@ public class Fragment_misReservas extends Fragment {
         btNologin.setVisibility(View.GONE);
     }
 
-
-
     private void NoLogueado() {
         final ScrollView svReservas = getView().findViewById(R.id.scrollViewReservas);
         final CardView cardProx = getView().findViewById(R.id.cardViewProxima);
@@ -349,4 +329,13 @@ public class Fragment_misReservas extends Fragment {
 
     }
 
+    @Override
+    public void onReservaClick(int position) {
+        Log.d(TAG, "onReservaClick: clicked! Posistion: "+position);
+        Log.d(TAG, "onReservaClick: "+datasetReservas.get(position).toString());
+        Intent intent = new Intent(this.getContext(), VerReservaActivity.class);
+
+        intent.putExtra("reservaSeleccionada", datasetReservas.get(position));
+        getActivity().startActivity(intent);
+    }
 }

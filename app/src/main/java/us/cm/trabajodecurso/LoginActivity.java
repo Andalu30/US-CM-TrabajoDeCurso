@@ -28,6 +28,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
@@ -80,7 +87,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 String pass = ((EditText) findViewById(R.id.loginpass)).getText().toString();
 
                 if (checkPass(mail, pass)){
-                    firebaseAuthContraseñaMailLogin(mail,pass);
+                    firebaseAuthContraseñaMailCreate(mail,pass);
                 }
             }
         });
@@ -183,6 +190,19 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                             FirebaseUser user = mAuth.getCurrentUser();
                             handleFirebaseAuthResult(task.getResult());
 
+                            // Creacion del nodo para el nuevo usuario en la base de datos
+                            String userID = mAuth.getCurrentUser().getUid();
+                            DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("usuarios").child(userID);
+                            Map newPost = new HashMap<>();
+                            Map reservasVacias = new HashMap<>();
+                            reservasVacias.put("0",0);
+                            newPost.put("susreservas",reservasVacias);
+                            current_user_db.setValue(newPost);
+
+
+
+
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -202,6 +222,24 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+
+
+                            // Creacion del nodo para el nuevo usuario en la base de datos
+
+                            String userID = mAuth.getCurrentUser().getUid();
+                            DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("usuarios").child(userID);
+                            Map newPost = new HashMap<>();
+                            Map reservasVacias = new HashMap<>();
+                            reservasVacias.put("0",0);
+                            //La reserva inicial es 0, reserva nula
+
+                            newPost.put("susreservas",reservasVacias);
+                            current_user_db.setValue(newPost);
+
+
+
+
+
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             Toast.makeText(LoginActivity.this, "Se ha creado la cuenta para "+email,
@@ -242,6 +280,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         }
                     }
                 });
+
     }
 
     @Override
