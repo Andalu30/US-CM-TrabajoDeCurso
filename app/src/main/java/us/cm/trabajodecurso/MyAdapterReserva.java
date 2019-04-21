@@ -46,7 +46,7 @@ public class MyAdapterReserva extends RecyclerView.Adapter<MyAdapterReserva.MyVi
 
 
         holder.tituloItemList.setText(mDataset.get(position).getTitulo());
-        holder.descripItemList.setText(mDataset.get(position).getDescripcion()+" "+mDataset.get(position).getFecha()+" "+mDataset.get(position).getHorario());
+        holder.descripItemList.setText(mDataset.get(position).getDescripcion()+" \n"+mDataset.get(position).getFecha().getTime().toString());
     }
 
     // Return the size of your dataset (invoked by the layout manager)

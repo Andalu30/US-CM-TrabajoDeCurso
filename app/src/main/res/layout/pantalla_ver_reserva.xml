@@ -58,6 +58,14 @@
                             android:text="Descripcion de la reserva"
                             android:textAlignment="center"
                             android:textAppearance="@android:style/TextAppearance.Material.SearchResult.Subtitle" />
+                        <TextView
+                            android:id="@+id/fechaReserva"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp"
+                            android:text="Fecha de la reserva"
+                            android:textAlignment="center"
+                            android:textAppearance="@android:style/TextAppearance.Material.SearchResult.Subtitle" />
 
 
                         <LinearLayout
@@ -157,6 +165,7 @@
                                     android:orientation="horizontal">
 
                                     <TextView
+                                        android:id="@+id/numeroReserva"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:padding="10dp"
@@ -167,7 +176,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:padding="10dp"
-                                        android:text="Codigo: 798654312978654"
+                                        android:text="Codigo:"
                                         android:textAppearance="@android:style/TextAppearance.Holo.Small" />
 
                                 </LinearLayout>
@@ -175,7 +184,7 @@
                                 <ImageView
                                     android:id="@+id/codigoConfirmacion"
                                     android:layout_width="match_parent"
-                                    android:layout_height="200dp"
+                                    android:layout_height="300dp"
                                     android:scaleType="centerCrop"
                                     android:visibility="visible"
                                     tools:src="@drawable/plaza_espanya" />

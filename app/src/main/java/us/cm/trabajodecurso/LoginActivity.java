@@ -172,14 +172,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 firebaseAuthWithGoogle(account);
 
 
-                // Creacion del nodo para el nuevo usuario en la base de datos
-                String userID = mAuth.getCurrentUser().getUid();
-                DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("usuarios").child(userID).child("susreservas");
-                Map newPost = new HashMap<>();
-                newPost.put("0",0);
-                current_user_db.setValue(newPost);
-
-
             } else {
                 // Google Sign-In failed
                 Log.e(TAG, "Google Sign-In failed.");
@@ -272,6 +264,18 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
+
+
+                            // Creacion del nodo para el nuevo usuario en la base de datos
+                            // Se modifica siempre con Google porque no se como hacerlo solo
+                            // cuando hay registro :D
+
+                            String userID = mAuth.getCurrentUser().getUid();
+                            DatabaseReference current_user_db =
+                                    FirebaseDatabase.getInstance().getReference().child("usuarios").child(userID).child("susreservas").child("0");
+                            current_user_db.setValue(0);
+
+
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             finish();
                         }

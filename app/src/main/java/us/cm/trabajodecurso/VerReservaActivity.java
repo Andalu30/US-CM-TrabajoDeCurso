@@ -1,6 +1,8 @@
 package us.cm.trabajodecurso;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
@@ -14,7 +16,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import org.w3c.dom.Text;
 
@@ -30,13 +41,14 @@ public class VerReservaActivity extends AppCompatActivity {
 
         //Recogemos informacion del intent
         final Reserva reservaIntent = (Reserva) getIntent().getSerializableExtra("reservaSeleccionada");
+        final Integer numeroReserva = (Integer) getIntent().getIntExtra("codigoReserva",0);
         if (reservaIntent == null){
             Log.e("Activity", "NO se ha recibido ninguna reserva mediante el intent");
         }
 
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Reserva: "+reservaIntent.getTitulo());
+        actionBar.setTitle("Reserva: #"+numeroReserva+" "+reservaIntent.getTitulo());
         actionBar.setDisplayHomeAsUpEnabled(true); //Activa boton atras
 
 
@@ -46,6 +58,9 @@ public class VerReservaActivity extends AppCompatActivity {
         TextView desc = (TextView) findViewById(R.id.txDescripcionReserva);
         desc.setText(reservaIntent.getDescripcion());
 
+        TextView fecha = (TextView) findViewById(R.id.fechaReserva);
+        fecha.setText(reservaIntent.getFecha().getTime().toString());
+
         TextView hor = (TextView) findViewById(R.id.txhorarioReserva);
         hor.setText(reservaIntent.getHorario());
 
@@ -53,6 +68,29 @@ public class VerReservaActivity extends AppCompatActivity {
         ubi.setText(reservaIntent.getUbicacion()); //TODO: Las reservas no tienen ubicacion, se debe de sacar del centro
 
 
+        TextView codigoReserva = (TextView) findViewById(R.id.numeroReserva);
+        codigoReserva.setText("Reserva #"+numeroReserva);
+
+
+
+        //CodigoQR
+        ImageView codigoConfirmacion = (ImageView) findViewById(R.id.codigoConfirmacion);
+        String text=
+                "#"+numeroReserva+":"+FirebaseAuth.getInstance().getCurrentUser().getUid()+
+                        "_"+reservaIntent.getTitulo()+"-"+reservaIntent.getFecha().getTime().toString(); //
+        // Whatever
+        // you need
+        // to encode
+                                                                    // in "the QR code"
+        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+        try {
+            BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE,200,200);
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+            codigoConfirmacion.setImageBitmap(bitmap);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
 
 
 
@@ -70,6 +108,8 @@ public class VerReservaActivity extends AppCompatActivity {
         });
 
 
+
+        //Añadir al calendario.
         calendario.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,9 +125,10 @@ public class VerReservaActivity extends AppCompatActivity {
                         .setData(CalendarContract.Events.CONTENT_URI)
                         .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME,
                                 beginTime.getTimeInMillis())
-                        .putExtra(CalendarContract.Events.TITLE, reservaIntent.getTitulo())
+                        .putExtra(CalendarContract.Events.TITLE,
+                                "NADIM reservas: "+reservaIntent.getTitulo())
                         .putExtra(CalendarContract.Events.DESCRIPTION, reservaIntent.getDescripcion())
-                        .putExtra(CalendarContract.Events.EVENT_LOCATION, "TestEvent")
+                        //.putExtra(CalendarContract.Events.EVENT_LOCATION, "TestEvent")
                         .putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
                 startActivity(intent);
             }

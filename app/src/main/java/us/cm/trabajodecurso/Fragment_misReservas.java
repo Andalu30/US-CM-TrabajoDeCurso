@@ -15,9 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ScrollView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,7 +26,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
     private RecyclerView.LayoutManager layoutManager;
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-    private List<Reserva> datasetReservas = new ArrayList<>();
+    private List<Reserva> mdatasetReservas = new ArrayList<>();
 
 
 
@@ -60,11 +61,6 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
 
-        // DEBUG SWITCHES
-        Switch swSinReservas = getView().findViewById(R.id.switchNoReserva);
-        Switch swNoLogin = getView().findViewById(R.id.switchNoLogin);
-        Switch swNoProx = getView().findViewById(R.id.switchProxima);
-
         final ScrollView svReservas = getView().findViewById(R.id.scrollViewReservas);
 
         final CardView cardProx = getView().findViewById(R.id.cardViewProxima);
@@ -76,64 +72,7 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
         final TextView txProx = getView().findViewById(R.id.proxres);
         final TextView txNoLogin = getView().findViewById(R.id.textoNoLogin);
 
-        swNoProx.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    txProx.setVisibility(View.GONE);
-                    cardProx.setVisibility(View.GONE);
-                } else {
-                    txProx.setVisibility(View.VISIBLE);
-                    cardProx.setVisibility(View.VISIBLE);
-                }
-            }
-        });
 
-        swSinReservas.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-
-                    svReservas.setVisibility(View.GONE);
-                    btNoReservas.setVisibility(View.VISIBLE);
-                    txNoReserva.setVisibility(View.VISIBLE);
-
-                    txNoLogin.setVisibility(View.GONE);
-                    btNologin.setVisibility(View.GONE);
-
-                }else{
-                    svReservas.setVisibility(View.VISIBLE);
-                    btNoReservas.setVisibility(View.VISIBLE);
-                    txNoReserva.setVisibility(View.VISIBLE);
-
-                    txNoLogin.setVisibility(View.VISIBLE);
-                    btNologin.setVisibility(View.VISIBLE);
-
-                }
-            }
-        });
-
-        swNoLogin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-
-                    svReservas.setVisibility(View.GONE);
-                    btNoReservas.setVisibility(View.GONE);
-                    txNoReserva.setVisibility(View.GONE);
-
-                    txNoLogin.setVisibility(View.VISIBLE);
-                    btNologin.setVisibility(View.VISIBLE);
-
-                }else{
-                    svReservas.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-
-
-        // DEBUG SWITCHES}
 
 
         Button bt_explorar = (Button) getView().findViewById(R.id.buttonNingunaReserva);
@@ -265,7 +204,7 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
         }
 
 
-        Log.i("INFO",datasetReservas.toString());
+        Log.i("INFO", mdatasetReservas.toString());
     }
 
 
@@ -280,12 +219,49 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
         layoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(layoutManager);
 
-        datasetReservas.add(reserva);
+        mdatasetReservas.add(reserva);
+        actualizaProximaReserva();
 
         // specify an adapter (see also next example)
-        mAdapter = new MyAdapterReserva(datasetReservas,this);
+        mAdapter = new MyAdapterReserva(mdatasetReservas,this);
         recyclerView.setAdapter(mAdapter);
 
+    }
+
+    private void actualizaProximaReserva(){
+
+        TextView proxTit = (TextView) getView().findViewById(R.id.mis_proxtit);
+        TextView proxhor = (TextView) getView().findViewById(R.id.mis_proxhor);
+        TextView proxdesc = (TextView) getView().findViewById(R.id.mis_proxdesc);
+        Button verproxbut = (Button) getView().findViewById(R.id.bt_verReservaProxima);
+
+        Calendar aux = Calendar.getInstance();
+        aux.set(3000,12,12);
+        Calendar now = Calendar.getInstance();
+
+        for (final Reserva reserva : mdatasetReservas){
+            Calendar a = reserva.getFecha();
+            if (reserva.getFecha().before(aux) && reserva.getFecha().after(now)){
+                aux = reserva.getFecha();
+
+                proxTit.setText(reserva.getTitulo());
+                proxhor.setText(reserva.getHorario());
+                proxdesc.setText(reserva.getDescripcion());
+
+
+                verproxbut.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), VerReservaActivity.class);
+
+                        intent.putExtra("reservaSeleccionada", reserva);
+                        getActivity().startActivity(intent);
+                    }
+                });
+
+
+            }
+        }
     }
 
 
@@ -327,10 +303,11 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
     @Override
     public void onReservaClick(int position) {
         Log.d(TAG, "onReservaClick: clicked! Posistion: "+position);
-        Log.d(TAG, "onReservaClick: "+datasetReservas.get(position).toString());
+        Log.d(TAG, "onReservaClick: "+ mdatasetReservas.get(position).toString());
         Intent intent = new Intent(this.getContext(), VerReservaActivity.class);
 
-        intent.putExtra("reservaSeleccionada", datasetReservas.get(position));
+        intent.putExtra("reservaSeleccionada", mdatasetReservas.get(position));
+        intent.putExtra("codigoReserva",position);
         getActivity().startActivity(intent);
     }
 }
