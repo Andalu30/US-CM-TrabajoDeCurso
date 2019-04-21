@@ -1,5 +1,6 @@
 package us.cm.trabajodecurso;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,6 +8,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,16 +19,27 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static android.support.constraint.Constraints.TAG;
+
 public class Fragment_PantallaPrincipal extends Fragment {
+
+    private FirebaseUser mFirebaseUser;
+
+    private Reserva mReservaMasProxima = new Reserva();
 
     @Nullable
     @Override
@@ -74,10 +88,7 @@ public class Fragment_PantallaPrincipal extends Fragment {
         btProxReserva.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fragment = new Fragment_ver_reserva();
-                FragmentManager fragMan = getFragmentManager();
-                FragmentTransaction ft = fragMan.beginTransaction();
-                ft.replace(R.id.screenArea, fragment).addToBackStack("back").commit();
+                startActivity(new Intent(getContext(), VerReservaActivity.class));
             }
         });
 
@@ -85,60 +96,120 @@ public class Fragment_PantallaPrincipal extends Fragment {
 
 
 
-//        // Write a message to the database
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference myRef = database.getReference("usuarios/test");
-//
-//        myRef.setValue("Hello, World!");
-//
-//
-//        DatabaseReference myRef2 = database.getReference("usuarios/anotherOne");
-//        myRef2.setValue("Hello, World!");
-//
+
+        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (mFirebaseUser == null){
+            NoProximoEvento();
+        }else{
+            PreparaProximaReserva();
+            PreparaReservaDestacada();
+        }
 
 
 
+    }
 
-        // Read a message to the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("reservas/1");
+    public void NoProximoEvento(){
+        final TextView proxText = (TextView) getView().findViewById(R.id.txProximoEvento);
+        final CardView cardProx = (CardView) getView().findViewById(R.id.cardProximoEvento);
+        proxText.setVisibility(View.GONE);
+        cardProx.setVisibility(View.GONE);
+    }
 
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+    private void PreparaReservaDestacada(){
+
+    }
+
+
+    private void PreparaProximaReserva(){
+        DatabaseReference db_reserv_user = FirebaseDatabase.getInstance().getReference("/usuarios/"+mFirebaseUser.getUid()+"/susreservas");
+        db_reserv_user.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("DB","On data change llamado");
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Long> numsReservas = (List<Long>) dataSnapshot.getValue();
 
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                Map<String, Object> reserva1 = (HashMap<String, Object>) dataSnapshot.getValue();
-
-                String descripcion = reserva1.get("descripcion").toString();
-                String fecha = reserva1.get("fecha").toString();
-                String disponibilidad = reserva1.get("disponibilidad").toString();
-                String horario = reserva1.get("horario").toString();
-                String titulo = reserva1.get("titulo").toString();
-
-
-                Log.d("DB",titulo+" "+descripcion+" "+horario+" "+fecha+" "+disponibilidad);
-
-                TextView cardTit = getView().findViewById(R.id.pprincipal_proxev_tit);
-                TextView carddesc = getView().findViewById(R.id.pprincipal_proxev_descrip);
-
-                cardTit.setText(titulo);
-                carddesc.setText(descripcion);
-
+                if (numsReservas == null || numsReservas.size()==1) //O no hay o es la nula (reserva 0)
+                    NoProximoEvento();
+                else
+                    getInformacionReservasUsuario(numsReservas);
 
 
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w("DB", "Failed to read value.", error.toException());
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("DB", "No se ha podido acceder a las reservas del usuario");
             }
         });
 
 
 
     }
+
+
+    private void getInformacionReservasUsuario(List<Long> reservas) {
+        Log.i("DB", "numeros reservas usuario: "+reservas);
+
+        final List<Map<String, Object>> infoReservas = new ArrayList<>();
+
+        for (Long numReserva:reservas) {
+            if (numReserva == 0){
+                continue;
+            }
+            // Numeros de las reservas del usuario
+
+            DatabaseReference db_reserv_user = FirebaseDatabase.getInstance().getReference("/reservas/"+numReserva);
+            db_reserv_user.addValueEventListener(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    Log.i("DB",map.toString());
+
+
+                    String titulo = (String) map.get("titulo");
+                    String descripcion = (String) map.get("descripcion");
+                    String horario = (String) map.get("horario");
+                    String ubicacion = (String) map.get("ubicacion");
+                    String fecha = (String) map.get("fecha");
+                    String centro = (String) map.get("centro");
+                    String disponibilidad = (String) map.get("disponibilidad");
+                    String tipo = (String) map.get("tipo");
+
+
+                    Reserva reserva = new Reserva(titulo, descripcion, horario,ubicacion, fecha, centro, disponibilidad, tipo);
+
+
+                    dibujaReservas(reserva);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.e("DB", "No se ha podido acceder a la informacion de la reserva");
+                }
+            });
+
+        }
+    }
+
+    private void dibujaReservas(final Reserva reserva){
+        TextView titulo = this.getView().findViewById(R.id.pprincipal_proxev_tit);
+        titulo.setText(reserva.getTitulo());
+        TextView desc = this.getView().findViewById(R.id.pprincipal_proxev_descrip);
+        desc.setText(reserva.getDescripcion());
+
+        Button prox = this.getView().findViewById(R.id.bt_proxReserva);
+        prox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), VerReservaActivity.class);
+                intent.putExtra("reservaSeleccionada", reserva);
+                getActivity().startActivity(intent);
+            }
+        });
+
+    }
+
+
 }

@@ -170,6 +170,16 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 // Google Sign-In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
+
+
+                // Creacion del nodo para el nuevo usuario en la base de datos
+                String userID = mAuth.getCurrentUser().getUid();
+                DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("usuarios").child(userID).child("susreservas");
+                Map newPost = new HashMap<>();
+                newPost.put("0",0);
+                current_user_db.setValue(newPost);
+
+
             } else {
                 // Google Sign-In failed
                 Log.e(TAG, "Google Sign-In failed.");
@@ -189,19 +199,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             handleFirebaseAuthResult(task.getResult());
-
-                            // Creacion del nodo para el nuevo usuario en la base de datos
-                            String userID = mAuth.getCurrentUser().getUid();
-                            DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("usuarios").child(userID);
-                            Map newPost = new HashMap<>();
-                            Map reservasVacias = new HashMap<>();
-                            reservasVacias.put("0",0);
-                            newPost.put("susreservas",reservasVacias);
-                            current_user_db.setValue(newPost);
-
-
-
-
 
                         } else {
                             // If sign in fails, display a message to the user.

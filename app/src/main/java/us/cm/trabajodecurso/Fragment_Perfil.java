@@ -110,10 +110,7 @@ public class Fragment_Perfil extends Fragment {
         btProxReserva.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fragment = new Fragment_ver_reserva();
-                FragmentManager fragMan = getFragmentManager();
-                FragmentTransaction ft = fragMan.beginTransaction();
-                ft.replace(R.id.screenArea, fragment).addToBackStack("back").commit();
+                startActivity(new Intent(getActivity(), VerReservaActivity.class));
             }
         });
 

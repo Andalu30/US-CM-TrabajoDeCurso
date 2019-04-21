@@ -163,10 +163,7 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
         bt_verReservaProx.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fragment = new Fragment_ver_reserva();
-                FragmentManager fragMan = getFragmentManager();
-                FragmentTransaction ft = fragMan.beginTransaction();
-                ft.replace(R.id.screenArea, fragment).addToBackStack("back").commit();
+                startActivity(new Intent(getContext(), VerReservaActivity.class));
             }
         });
 
@@ -196,8 +193,6 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
 
 
         // Numeros de las reservas del usuario
-
-        //TODO: El usuario esta hardcodeado
 
         DatabaseReference db_reserv_user = database.getReference("/usuarios/"+mFirebaseUser.getUid()+"/susreservas");
 

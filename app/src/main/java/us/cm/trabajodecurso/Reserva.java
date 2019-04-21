@@ -19,6 +19,9 @@ public class Reserva implements Serializable {
     private String disponibilidad;
     private String tipo;
 
+    public Reserva() {
+    }
+
     public Reserva(String titulo, String descripcion, String horario, String ubicacion, String fecha,
                    String centro, String disponibilidad, String tipo) {
         this.titulo = titulo;

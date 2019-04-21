@@ -30,6 +30,9 @@ public class VerReservaActivity extends AppCompatActivity {
 
         //Recogemos informacion del intent
         final Reserva reservaIntent = (Reserva) getIntent().getSerializableExtra("reservaSeleccionada");
+        if (reservaIntent == null){
+            Log.e("Activity", "NO se ha recibido ninguna reserva mediante el intent");
+        }
 
 
         ActionBar actionBar = getSupportActionBar();
