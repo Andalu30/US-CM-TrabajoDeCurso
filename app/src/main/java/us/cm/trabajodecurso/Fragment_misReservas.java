@@ -26,8 +26,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -45,7 +43,7 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     private List<Reserva> mdatasetReservas = new ArrayList<>();
-
+    private List<Reserva> mreservasPasadas = new ArrayList<>();
 
 
     @Nullable
@@ -192,7 +190,13 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
                     Reserva reserva = new Reserva(titulo, descripcion, horario,ubicacion, fecha, centro, disponibilidad, tipo);
 
 
-                    dibujaReservas(reserva);
+                    if (reserva.getFecha().getTime().after(Calendar.getInstance().getTime())){
+                        dibujaReservasProximas(reserva);
+                    }else{
+                        dibujaReservasPasadas(reserva);
+                    }
+
+
                 }
 
                 @Override
@@ -207,8 +211,26 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
         Log.i("INFO", mdatasetReservas.toString());
     }
 
+    private void dibujaReservasPasadas(Reserva reserva){
+        recyclerView = (RecyclerView) this.getView().findViewById(R.id.reservasPasadasRecicler);
 
-    private void dibujaReservas(Reserva reserva){
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        recyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        layoutManager = new LinearLayoutManager(this.getContext());
+        recyclerView.setLayoutManager(layoutManager);
+
+        mreservasPasadas.add(reserva);
+
+        // specify an adapter (see also next example)
+        mAdapter = new MyAdapterReserva(mreservasPasadas,this);
+        recyclerView.setAdapter(mAdapter);
+
+    }
+
+    private void dibujaReservasProximas(Reserva reserva){
         recyclerView = (RecyclerView) this.getView().findViewById(R.id.pmisreservas_recycler);
 
         // use this setting to improve performance if you know that changes

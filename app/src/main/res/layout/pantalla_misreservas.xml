@@ -93,15 +93,26 @@
 
 
             <TextView
-                android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="Otras reservas"
+                android:text="Proximas Reservas"
                 android:textAppearance="@android:style/TextAppearance.Material.Large" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/pmisreservas_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="Proximas Reservas"
+                android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/reservasPasadasRecicler"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
