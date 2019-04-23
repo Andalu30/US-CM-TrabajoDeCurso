@@ -71,6 +71,14 @@
                                 android:textSize="18sp" />
 
                             <TextView
+                                android:id="@+id/pprinci_proxhor"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="18:40"
+                                android:textColor="#555"
+                                android:textSize="20dp" />
+
+                            <TextView
                                 android:id="@+id/pprincipal_proxev_descrip"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -135,6 +143,7 @@
                         </LinearLayout>
 
                         <Button
+                            android:id="@+id/bt_mas_infopp"
                             style="@style/Widget.AppCompat.Button.Borderless"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -193,17 +202,5 @@
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
-
-    <Switch
-        android:id="@+id/swNoProx"
-        android:layout_width="169dp"
-        android:layout_height="34dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:layout_weight="1"
-        android:text="NoProximoEvento"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
 
 </android.support.constraint.ConstraintLayout>

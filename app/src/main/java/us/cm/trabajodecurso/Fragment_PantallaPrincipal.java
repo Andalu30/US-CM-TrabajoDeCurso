@@ -40,6 +40,7 @@ public class Fragment_PantallaPrincipal extends Fragment {
     private FirebaseUser mFirebaseUser;
 
     private Reserva mReservaMasProxima = new Reserva();
+    private List<Reserva> mdatasetReservas = new ArrayList<>();
 
     @Nullable
     @Override
@@ -50,29 +51,8 @@ public class Fragment_PantallaPrincipal extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-        final Switch swNoprox = (Switch) getView().findViewById(R.id.swNoProx);
-        final TextView proxText = (TextView) getView().findViewById(R.id.txProximoEvento);
-        final CardView cardProx = (CardView) getView().findViewById(R.id.cardProximoEvento);
-
-
-        // DEBUG SWITCH
-        swNoprox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    proxText.setVisibility(View.GONE);
-                    cardProx.setVisibility(View.GONE);
-                }else{
-                    proxText.setVisibility(View.VISIBLE);
-                    cardProx.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-        // DEBUG SWITCH----
-
-
         Button btExplorar = (Button) getView().findViewById(R.id.bt_explorar);
-        Button btProxReserva = (Button) getView().findViewById(R.id.bt_proxReserva);
+        Button btMasinfoDestacada = (Button) getView().findViewById(R.id.bt_mas_infopp);
 
         btExplorar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,16 +64,15 @@ public class Fragment_PantallaPrincipal extends Fragment {
             }
         });
 
-
-        btProxReserva.setOnClickListener(new View.OnClickListener() {
+        btMasinfoDestacada.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), VerReservaActivity.class));
+                Fragment fragment = new Fragment_Explorar();
+                FragmentManager fragMan = getFragmentManager();
+                FragmentTransaction ft = fragMan.beginTransaction();
+                ft.replace(R.id.screenArea, fragment).addToBackStack("back").commit();
             }
         });
-
-
-
 
 
 
@@ -116,15 +95,15 @@ public class Fragment_PantallaPrincipal extends Fragment {
         cardProx.setVisibility(View.GONE);
     }
 
-
-    private void PreparaReservaDestacada(){
-
-    }
-
-
     private void PreparaProximaReserva(){
-        DatabaseReference db_reserv_user = FirebaseDatabase.getInstance().getReference("/usuarios/"+mFirebaseUser.getUid()+"/susreservas");
+        // Numeros de las reservas del usuario
+
+        DatabaseReference db_reserv_user =
+                FirebaseDatabase.getInstance().getReference("/usuarios/"+mFirebaseUser.getUid()+
+                "/susreservas");
+
         db_reserv_user.addListenerForSingleValueEvent(new ValueEventListener() {
+
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Long> numsReservas = (List<Long>) dataSnapshot.getValue();
@@ -142,10 +121,12 @@ public class Fragment_PantallaPrincipal extends Fragment {
                 Log.e("DB", "No se ha podido acceder a las reservas del usuario");
             }
         });
+    }
 
-
+    private void PreparaReservaDestacada(){
 
     }
+
 
 
     private void getInformacionReservasUsuario(List<Long> reservas) {
@@ -159,7 +140,9 @@ public class Fragment_PantallaPrincipal extends Fragment {
             }
             // Numeros de las reservas del usuario
 
-            DatabaseReference db_reserv_user = FirebaseDatabase.getInstance().getReference("/reservas/"+numReserva);
+            DatabaseReference db_reserv_user =
+                    FirebaseDatabase.getInstance().getReference("/reservas/"+numReserva);
+
             db_reserv_user.addValueEventListener(new ValueEventListener() {
 
                 @Override
@@ -181,7 +164,9 @@ public class Fragment_PantallaPrincipal extends Fragment {
                     Reserva reserva = new Reserva(titulo, descripcion, horario,ubicacion, fecha, centro, disponibilidad, tipo);
 
 
-                    dibujaReservas(reserva);
+                    mdatasetReservas.add(reserva);
+                    actualizaProximaReserva();
+
                 }
 
                 @Override
@@ -193,23 +178,55 @@ public class Fragment_PantallaPrincipal extends Fragment {
         }
     }
 
-    private void dibujaReservas(final Reserva reserva){
-        TextView titulo = this.getView().findViewById(R.id.pprincipal_proxev_tit);
-        titulo.setText(reserva.getTitulo());
-        TextView desc = this.getView().findViewById(R.id.pprincipal_proxev_descrip);
-        desc.setText(reserva.getDescripcion());
+    private void actualizaProximaReserva(){
 
-        Button prox = this.getView().findViewById(R.id.bt_proxReserva);
-        prox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), VerReservaActivity.class);
-                intent.putExtra("reservaSeleccionada", reserva);
-                getActivity().startActivity(intent);
+        TextView proxTit = (TextView) getView().findViewById(R.id.pprincipal_proxev_tit);
+        TextView proxhor = (TextView) getView().findViewById(R.id.pprinci_proxhor);
+        TextView proxdesc = (TextView) getView().findViewById(R.id.pprincipal_proxev_descrip);
+
+        Button verproxbut = (Button) getView().findViewById(R.id.bt_proxReserva);
+
+
+
+        Calendar aux = Calendar.getInstance();
+        aux.set(3000,12,12);
+        Calendar now = Calendar.getInstance();
+
+        for (final Reserva reserva : mdatasetReservas){
+            Calendar a = reserva.getFecha();
+            if (reserva.getFecha().before(aux) && reserva.getFecha().after(now)){
+                aux = reserva.getFecha();
+
+                proxTit.setText(reserva.getTitulo());
+                proxdesc.setText(reserva.getDescripcion());
+                proxhor.setText(reserva.getHorario());
+
+
+                verproxbut.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), VerReservaActivity.class);
+
+                        intent.putExtra("reservaSeleccionada", reserva);
+                        getActivity().startActivity(intent);
+                    }
+                });
+
+
             }
-        });
-
+        }
     }
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

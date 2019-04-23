@@ -1,14 +1,23 @@
 package us.cm.trabajodecurso;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.media.RingtoneManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -223,7 +232,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_explorar) {
             cambiaFragment("explorar");
         } else if (id == R.id.nav_notificaciones) {
-            cambiaFragment("notificaciones");
+            notificacionDePrueba();
+            //cambiaFragment("notificaciones");
         } else if (id == R.id.nav_info) {
             startActivity(new Intent(this, InfoActivity.class));
         } else if (id == R.id.nav_ajustes) {
@@ -235,6 +245,7 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
     private void cambiaFragment(String pantalla) {
         Fragment fragment = null;
@@ -266,4 +277,43 @@ public class MainActivity extends AppCompatActivity
     public void setToolBarTitle(String title) {
         getSupportActionBar().setTitle(title);
     }
+
+
+
+    private void notificacionDePrueba() {
+
+        String id_canal_notificaciones_solo_para_o = "esta llegua no es mi vieja llegua gris";
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            String channelId = "nadim_notifs";
+            id_canal_notificaciones_solo_para_o = channelId;
+
+            CharSequence channelName = "Canal de notificaciones de NADIM reservas";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel notificationChannel = null;
+                notificationChannel = new NotificationChannel(channelId, channelName, importance);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, id_canal_notificaciones_solo_para_o)
+                .setSmallIcon(R.drawable.ic_notifications)
+                .setAutoCancel(true)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                .setContentTitle("Notificacion de prueba")
+                .setContentText("Este es el contenido de la notificación.")
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+        notificationManager.notify(0, builder.build());
+
+
+    }
+
 }
