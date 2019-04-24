@@ -268,7 +268,7 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
 
                 proxTit.setText(reserva.getTitulo());
                 proxhor.setText(reserva.getHorario());
-                proxdesc.setText(reserva.getDescripcion());
+                proxdesc.setText(reserva.getFecha().getTime().toString());
 
 
                 verproxbut.setOnClickListener(new View.OnClickListener() {

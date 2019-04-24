@@ -57,7 +57,7 @@
                                 android:id="@+id/mis_proxtit"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Pista de tenis 2"
+                                android:text="Titulo"
                                 android:textColor="#000"
                                 android:textSize="18sp" />
 
@@ -65,7 +65,7 @@
                                 android:id="@+id/mis_proxhor"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="18:40"
+                                android:text="00:00"
                                 android:textColor="#555"
                                 android:textSize="20dp" />
 
@@ -73,7 +73,7 @@
                                 android:id="@+id/mis_proxdesc"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="SADUS Bermejales"
+                                android:text="Descripción"
                                 android:textColor="#555"
                                 android:textSize="15dp" />
                         </LinearLayout>
