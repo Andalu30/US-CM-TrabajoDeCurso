@@ -70,6 +70,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:padding="8dp"
+                    android:onClick="easteregg"
                     app:srcCompat="@drawable/android_studio_icon" />
 
                 <ImageView

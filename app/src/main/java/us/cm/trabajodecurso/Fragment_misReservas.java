@@ -121,7 +121,8 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
 
         if (mFirebaseUser == null) {
             // Not signed in, launch the Sign In activity
-            this.NoLogueado();
+            startActivity(new Intent(this.getContext(), LoginActivity.class));
+            //this.NoLogueado();
         }
 
 
