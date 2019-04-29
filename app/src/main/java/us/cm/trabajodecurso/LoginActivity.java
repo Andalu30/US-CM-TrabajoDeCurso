@@ -39,6 +39,7 @@ import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
+    /**Activity encargada de hacer el login del usuario*/
 
     // Firebase instance variables
     private FirebaseAuth mAuth;
@@ -101,7 +102,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         // Set click listeners
         mSignInButton.setOnClickListener(this);
 
-        //TODO: QUITAR LA STRING ID, NO SOLO COMERTARLA!!!!
+        //TODO: QUITAR LA STRING ID AL HACER COMMIT, NO SOLO COMERTARLA!!!!
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -120,7 +121,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
 
     private boolean checkPass(String mail, String pass) {
-        if (!mail.isEmpty() && pass.length()>=8)
+        /**Controlador de la contraseña*/
+        if (!mail.isEmpty() && pass.length()>=8) //Este es el minimo de firebase
             return true;
         else
         if (mail.isEmpty())
@@ -149,6 +151,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         }
     }
 
+    //Activar el circulito para dar feedback al usuario.
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in_button:
@@ -288,6 +291,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     public void onBackPressed() {
         super.onBackPressed();
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        //Volver al menu principal
     }
 
     @Override

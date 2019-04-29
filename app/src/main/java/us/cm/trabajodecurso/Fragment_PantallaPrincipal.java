@@ -36,6 +36,7 @@ import java.util.Map;
 import static android.support.constraint.Constraints.TAG;
 
 public class Fragment_PantallaPrincipal extends Fragment {
+    /** Fragment de la pantalla principal de la aplicacion.*/
 
     private FirebaseUser mFirebaseUser;
 
@@ -51,6 +52,7 @@ public class Fragment_PantallaPrincipal extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
+        //Botones de la app
         Button btExplorar = (Button) getView().findViewById(R.id.bt_explorar);
         Button btMasinfoDestacada = (Button) getView().findViewById(R.id.bt_mas_infopp);
 
@@ -75,7 +77,7 @@ public class Fragment_PantallaPrincipal extends Fragment {
         });
 
 
-
+        //Check login usuario
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (mFirebaseUser == null){
             NoProximoEvento();
@@ -89,6 +91,7 @@ public class Fragment_PantallaPrincipal extends Fragment {
     }
 
     public void NoProximoEvento(){
+        /** Esconde la tarjeta de proximo evento*/
         final TextView proxText = (TextView) getView().findViewById(R.id.txProximoEvento);
         final CardView cardProx = (CardView) getView().findViewById(R.id.cardProximoEvento);
         proxText.setVisibility(View.GONE);
@@ -96,8 +99,8 @@ public class Fragment_PantallaPrincipal extends Fragment {
     }
 
     private void PreparaProximaReserva(){
-        // Numeros de las reservas del usuario
 
+        // Recojemos los numeros que se corresponden con las reservas del usuario.
         DatabaseReference db_reserv_user =
                 FirebaseDatabase.getInstance().getReference("/usuarios/"+mFirebaseUser.getUid()+
                 "/susreservas");
@@ -108,9 +111,11 @@ public class Fragment_PantallaPrincipal extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Long> numsReservas = (List<Long>) dataSnapshot.getValue();
 
-                if (numsReservas == null || numsReservas.size()==1) //O no hay o es la nula (reserva 0)
+                if (numsReservas == null || numsReservas.size()==1)
+                    //Si null o solo hay una reserva (la nula) se oculta proximo evento.
                     NoProximoEvento();
                 else
+                    //Se busca la informacion de cada reserva.
                     getInformacionReservasUsuario(numsReservas);
 
 
@@ -124,13 +129,16 @@ public class Fragment_PantallaPrincipal extends Fragment {
     }
 
     private void PreparaReservaDestacada(){
+        /**Encargada de preparar la tarjeta de la reserva destacada*/
 
     }
 
 
 
     private void getInformacionReservasUsuario(List<Long> reservas) {
-        Log.i("DB", "numeros reservas usuario: "+reservas);
+        /**Encargado de crear un objeto Reserva segun los numeros de las reservas del usuario*/
+
+        //Log.i("DB", "numeros reservas usuario: "+reservas);
 
         final List<Map<String, Object>> infoReservas = new ArrayList<>();
 
@@ -165,13 +173,15 @@ public class Fragment_PantallaPrincipal extends Fragment {
 
 
                     mdatasetReservas.add(reserva);
-                    actualizaProximaReserva();
+                    actualizaProximaReserva(); //Llamamos a esta funcion desde aqui porque no se
+                    // puede llamar desde otro lugar ya que depende del mdatasetReservas y si no
+                    // hay reservas (porque esta funcion es asincrona) seria null y hay errores.
 
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.e("DB", "No se ha podido acceder a la informacion de la reserva");
+                    Log.e("DB", "No se ha podido acceder a la información de la reserva");
                 }
             });
 
@@ -179,6 +189,7 @@ public class Fragment_PantallaPrincipal extends Fragment {
     }
 
     private void actualizaProximaReserva(){
+        /**Encargado de seleccionar la proxima reserva de entre todas de las del dataset*/
 
         TextView proxTit = (TextView) getView().findViewById(R.id.pprincipal_proxev_tit);
         TextView proxhor = (TextView) getView().findViewById(R.id.pprinci_proxhor);

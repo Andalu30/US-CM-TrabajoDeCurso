@@ -34,6 +34,9 @@ import java.util.Map;
 import static android.support.constraint.Constraints.TAG;
 
 public class Fragment_misReservas extends Fragment implements MyAdapterReserva.OnReservaListener{
+    /**Fragment encargado de mostrar todos las reservas del usuario. Implementa MyAdapterReserva
+     * .OnReservaListener para que se pueda pulsar la reserva dentro de cada uno de los
+     * RecyclerView*/
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -49,8 +52,8 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ((MainActivity) getActivity()).setToolBarTitle("Mis reservas");
 
+        ((MainActivity) getActivity()).setToolBarTitle("Mis reservas");
         return inflater.inflate(R.layout.pantalla_misreservas,null);
 
     }
@@ -60,25 +63,19 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
 
 
         final ScrollView svReservas = getView().findViewById(R.id.scrollViewReservas);
-
         final CardView cardProx = getView().findViewById(R.id.cardViewProxima);
-
         final Button btNologin = getView().findViewById(R.id.buttonNoLogin);
         final Button btNoReservas = getView().findViewById(R.id.buttonNingunaReserva);
         final TextView txNoReserva = getView().findViewById(R.id.textoNingunaReserva);
-
         final TextView txProx = getView().findViewById(R.id.proxres);
         final TextView txNoLogin = getView().findViewById(R.id.textoNoLogin);
-
-
-
 
         Button bt_explorar = (Button) getView().findViewById(R.id.buttonNingunaReserva);
         Button bt_login =  (Button) getView().findViewById(R.id.buttonNoLogin);
         Button bt_verReservaProx = (Button) getView().findViewById(R.id.bt_verReservaProxima);
 
 
-
+        //Clics de botons
         bt_explorar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,9 +117,9 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         if (mFirebaseUser == null) {
-            // Not signed in, launch the Sign In activity
+            // Si no esta logueado llevarlo a que se loguee
             startActivity(new Intent(this.getContext(), LoginActivity.class));
-            //this.NoLogueado();
+
         }
 
 
@@ -130,8 +127,11 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
 
 
 
-        // Numeros de las reservas del usuario
+        // Igual que en MainActivity, no es lo mejor, porque gastamos consultas en firebase pero
+        // da el apaño.
 
+
+        // Numeros de las reservas del usuario
         DatabaseReference db_reserv_user = database.getReference("/usuarios/"+mFirebaseUser.getUid()+"/susreservas");
 
         db_reserv_user.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -144,8 +144,6 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
                     ningunaReserva();
                 else
                     getInformacionReservasUsuario(numsReservas);
-
-
             }
 
             @Override
@@ -158,6 +156,7 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
 
 
     private void getInformacionReservasUsuario(List<Long> reservas) {
+        /**Se encarga de crear Reservas con la info de los numeros de las reservas del usuario */
         Log.i("DB", "numeros reservas usuario: "+reservas);
 
         final List<Map<String, Object>> infoReservas = new ArrayList<>();
@@ -166,7 +165,6 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
             if (numReserva == 0){
                 continue;
             }
-            // Numeros de las reservas del usuario
 
             DatabaseReference db_reserv_user = database.getReference("/reservas/"+numReserva);
 
@@ -192,6 +190,7 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
 
 
                     if (reserva.getFecha().getTime().after(Calendar.getInstance().getTime())){
+                        //Si es en el futuro
                         dibujaReservasProximas(reserva);
                     }else{
                         dibujaReservasPasadas(reserva);
@@ -213,6 +212,8 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
     }
 
     private void dibujaReservasPasadas(Reserva reserva){
+        /**Se añade la reserva al dataset correspondiente y se llama al adapter para poder
+         * meterlo en el recycler view */
         recyclerView = (RecyclerView) this.getView().findViewById(R.id.reservasPasadasRecicler);
 
         // use this setting to improve performance if you know that changes
@@ -232,6 +233,8 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
     }
 
     private void dibujaReservasProximas(Reserva reserva){
+        //Lo mismo pero con las proximas
+
         recyclerView = (RecyclerView) this.getView().findViewById(R.id.pmisreservas_recycler);
 
         // use this setting to improve performance if you know that changes
@@ -252,6 +255,7 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
     }
 
     private void actualizaProximaReserva(){
+        /** Modifica la tarjeta de la proxima reserva con la proxmia del dataset de las futuras.*/
 
         TextView proxTit = (TextView) getView().findViewById(R.id.mis_proxtit);
         TextView proxhor = (TextView) getView().findViewById(R.id.mis_proxhor);
@@ -289,6 +293,7 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
 
 
     private void ningunaReserva() {
+        /**Prepara la pantalla si no hay ninguna reserva*/
         final ScrollView svReservas = getView().findViewById(R.id.scrollViewReservas);
         final Button btNologin = getView().findViewById(R.id.buttonNoLogin);
         final Button btNoReservas = getView().findViewById(R.id.buttonNingunaReserva);
@@ -305,6 +310,9 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
     }
 
     private void NoLogueado() {
+        /**Prepara la pantalla si no esta logueado, aunque no haria falta porque se lleva al
+         * login al usuario.*/
+
         final ScrollView svReservas = getView().findViewById(R.id.scrollViewReservas);
         final CardView cardProx = getView().findViewById(R.id.cardViewProxima);
         final Button btNologin = getView().findViewById(R.id.buttonNoLogin);
@@ -325,6 +333,9 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
 
     @Override
     public void onReservaClick(int position) {
+        /**Metodo encargado de gestionar los clics en los recicler views. Hace un intent con la
+         * informacion de la reserva para poder enseñarla en la otra activity*/
+
         Log.d(TAG, "onReservaClick: clicked! Posistion: "+position);
         Log.d(TAG, "onReservaClick: "+ mdatasetReservas.get(position).toString());
         Intent intent = new Intent(this.getContext(), VerReservaActivity.class);

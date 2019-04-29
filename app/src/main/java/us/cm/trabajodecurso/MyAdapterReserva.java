@@ -13,6 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 public class MyAdapterReserva extends RecyclerView.Adapter<MyAdapterReserva.MyViewHolder> {
+    /**
+     * Adaptador que se utiliza para poder llenar los recicler views con los objetos de tipo
+     * Reserva
+     */
+
+
+
     private List<Reserva> mDataset;
     private OnReservaListener mOnReservaListener;
 
@@ -76,12 +83,14 @@ public class MyAdapterReserva extends RecyclerView.Adapter<MyAdapterReserva.MyVi
             itemView.setOnClickListener(this);
         }
 
+        //Importante para que se puedan tener en cuenta los clics en los reciclerViews
         @Override
         public void onClick(View v) {
             onReservaListener.onReservaClick(getAdapterPosition());
         }
     }
 
+    //Importante para que se puedan tener en cuenta los clics en los reciclerViews
     public interface OnReservaListener{
         void onReservaClick(int position);
     }

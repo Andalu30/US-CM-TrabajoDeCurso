@@ -44,6 +44,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
+/** Clase principal de la aplicacion. Se encarga de dibujar y gestionar el navigation drawer.
+ * Lo que esta debajo del nw son fragments porque son necesarios para que funcione correctamente.*/
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
 
@@ -77,9 +80,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         menuCerrarSesion = (MenuItem) findViewById(R.id.bt_cerrarSesion);
 
+        //Inicializacion
         cambiaFragment("inicio");
 
 
@@ -89,6 +92,8 @@ public class MainActivity extends AppCompatActivity
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
 
+
+        //Inicialización del contenido del navigation drawer.
 
         View header = navigationView.getHeaderView(0);
         TextView name = (TextView) header.findViewById(R.id.nombreUsuario_header);
@@ -105,6 +110,7 @@ public class MainActivity extends AppCompatActivity
         });
 
 
+        //Sino se ha logueado un usuario.
         if (mFirebaseUser == null) {
 
             FirebaseUserNombre = ANONYMOUS;
@@ -112,13 +118,8 @@ public class MainActivity extends AppCompatActivity
             FirebaseFotoPerfil = null;
             headerLogin.setVisibility(View.VISIBLE);
 
-
-
-//            // Not signed in, launch the Sign In activity
-//            startActivity(new Intent(this, LoginActivity.class));
-//            finish();
-//            return;
         } else {
+            //Cambio de los datos del nw
             headerLogin.setVisibility(View.GONE);
             FirebaseUserNombre = mFirebaseUser.getDisplayName();
             FirebaseUserEmail = mFirebaseUser.getEmail();
@@ -137,7 +138,8 @@ public class MainActivity extends AppCompatActivity
         name.setText(FirebaseUserNombre);
         email.setText(FirebaseUserEmail);
 
-        //Descargar imagen del usuario y colocarla
+
+        //Descargar imagen del usuario y colocarla en el nw
         GetBitmapFromURLAsync getBitmapFromURLAsync = new GetBitmapFromURLAsync();
         getBitmapFromURLAsync.execute(FirebaseFotoPerfil);
         Bitmap imagenUsuario = null;
@@ -215,10 +217,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        /** Encargado de controlar los clics en los botones del nw*/
 
         // Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -248,6 +250,7 @@ public class MainActivity extends AppCompatActivity
 
 
     private void cambiaFragment(String pantalla) {
+        /** Encargado de cambiar el fragment debajo del nw*/
         Fragment fragment = null;
 
         if (pantalla == "inicio") {

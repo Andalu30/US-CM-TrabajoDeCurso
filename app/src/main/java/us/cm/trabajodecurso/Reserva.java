@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Objects;
 
 public class Reserva implements Serializable {
+    /**Clase Reserva, es una clase java de toda la vida nada nuevo*/
 
     private String titulo;
     private String descripcion;
