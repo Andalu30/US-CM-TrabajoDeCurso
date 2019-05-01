@@ -65,7 +65,8 @@ public class VerReservaActivity extends AppCompatActivity {
         hor.setText(reservaIntent.getHorario());
 
         TextView ubi = (TextView) findViewById(R.id.txubicacionReserva);
-        ubi.setText(reservaIntent.getUbicacion()); //TODO: Las reservas no tienen ubicacion, se debe de sacar del centro
+        ubi.setText(reservaIntent.getCentro()); //TODO: Las reservas no tienen ubicacion, se debe de
+        // sacar del centro
 
 
         TextView codigoReserva = (TextView) findViewById(R.id.numeroReserva);
@@ -100,7 +101,7 @@ public class VerReservaActivity extends AppCompatActivity {
         btgmaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String uri = "http://maps.google.com/maps?q=" + reservaIntent.getUbicacion();
+                String uri = "http://maps.google.com/maps?q=" + reservaIntent.getCentro();
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
                 startActivity(intent);

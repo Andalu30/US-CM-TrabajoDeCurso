@@ -251,7 +251,6 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
         // specify an adapter (see also next example)
         mAdapter = new MyAdapterReserva(mdatasetReservas,this);
         recyclerView.setAdapter(mAdapter);
-
     }
 
     private void actualizaProximaReserva(){
