@@ -46,7 +46,9 @@ public class Fragment_PantallaPrincipal extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        ((MainActivity) getActivity()).setToolBarTitle("NADIM Reservas");
         return inflater.inflate(R.layout.pantalla_principal,null);
+
     }
 
     @Override
@@ -82,7 +84,7 @@ public class Fragment_PantallaPrincipal extends Fragment {
         if (mFirebaseUser == null){
             NoProximoEvento();
         }else{
-            PreparaProximaReserva();
+            //PreparaProximaReserva();
             PreparaReservaDestacada();
         }
 

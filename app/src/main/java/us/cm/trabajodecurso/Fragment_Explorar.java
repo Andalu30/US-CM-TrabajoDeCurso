@@ -30,6 +30,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -230,10 +231,11 @@ public class Fragment_Explorar extends Fragment implements MyAdapterReserva.OnRe
 
         Log.d(TAG, "onReservaClick: clicked! Posistion: "+position);
         Log.d(TAG, "onReservaClick: "+ mdatasetReservas.get(position).toString());
-        Intent intent = new Intent(this.getContext(), VerReservaActivity.class);
+        Intent intent = new Intent(this.getContext(), VerInfoReservaActivity.class);
 
         intent.putExtra("reservaSeleccionada", mdatasetReservas.get(position));
         intent.putExtra("codigoReserva",position);
+        intent.putExtra("datasetreservas", (Serializable) mdatasetReservas);
         getActivity().startActivity(intent);
     }
 }

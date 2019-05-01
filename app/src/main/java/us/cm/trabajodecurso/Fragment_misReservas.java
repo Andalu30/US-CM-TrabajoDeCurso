@@ -132,7 +132,8 @@ public class Fragment_misReservas extends Fragment implements MyAdapterReserva.O
 
 
         // Numeros de las reservas del usuario
-        DatabaseReference db_reserv_user = database.getReference("/usuarios/"+mFirebaseUser.getUid()+"/susreservas");
+        DatabaseReference db_reserv_user =
+                database.getReference("/usuarios/"+mFirebaseUser.getUid()+"/susreservas/");
 
         db_reserv_user.addListenerForSingleValueEvent(new ValueEventListener() {
 
