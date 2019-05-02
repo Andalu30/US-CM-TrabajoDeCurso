@@ -84,7 +84,7 @@ public class Fragment_PantallaPrincipal extends Fragment {
         if (mFirebaseUser == null){
             NoProximoEvento();
         }else{
-            //PreparaProximaReserva();
+            PreparaProximaReserva();
             PreparaReservaDestacada();
         }
 

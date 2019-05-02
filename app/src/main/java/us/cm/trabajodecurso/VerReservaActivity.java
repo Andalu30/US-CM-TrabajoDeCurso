@@ -129,7 +129,7 @@ public class VerReservaActivity extends AppCompatActivity {
                         .putExtra(CalendarContract.Events.TITLE,
                                 "NADIM reservas: "+reservaIntent.getTitulo())
                         .putExtra(CalendarContract.Events.DESCRIPTION, reservaIntent.getDescripcion())
-                        //.putExtra(CalendarContract.Events.EVENT_LOCATION, "TestEvent")
+                        .putExtra(CalendarContract.Events.EVENT_LOCATION, reservaIntent.getCentro())
                         .putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
                 startActivity(intent);
             }

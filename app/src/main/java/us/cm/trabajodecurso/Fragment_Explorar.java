@@ -179,8 +179,8 @@ public class Fragment_Explorar extends Fragment implements MyAdapterReserva.OnRe
                     Reserva reserva = new Reserva(titulo, descripcion, horario,ubicacion, fecha, centro, disponibilidad, tipo);
 
 
-                    if (reserva.getFecha().getTime().after(Calendar.getInstance().getTime())) {
-                        //Si es en el futuro
+                    if (reserva.getFecha().getTime().after(Calendar.getInstance().getTime()) && reserva.getDisponibilidad().equals("true")) {
+                        //Si es en el futuro y esta disponible
                         dibujaReservasProximas(reserva);
                     }
 

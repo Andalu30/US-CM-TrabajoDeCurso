@@ -2,10 +2,8 @@ package us.cm.trabajodecurso;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -13,10 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -24,20 +21,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-import static android.support.constraint.Constraints.TAG;
-
 public class VerInfoReservaActivity extends AppCompatActivity {
+
+    private Integer prox;
+
 
     public void onCreate(Bundle savedInstanceState) {
 
@@ -153,17 +144,51 @@ public class VerInfoReservaActivity extends AppCompatActivity {
 
 
                                 if (reserva.equals(reservaIntent)) {
-                                guardaReservaBaseDatos(i);
+                                    getProxReservaUsuario(i);
+                                    //guardaReservaBaseDatos(i);
                                 }
 
                             }
 
-                            private void guardaReservaBaseDatos(int i) {
+                            private void guardaReservaBaseDatos(int value, int pos){
                                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                                 DatabaseReference myRef =
-                                        database.getReference("/usuarios/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/susreservas/"+i);
+                                        database.getReference("/usuarios/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/susreservas/"+pos);
                                 myRef.setValue(i);
+
+                                DatabaseReference myRef2 =
+                                        database.getReference("/reservas/"+ value+
+                                                "/disponibilidad/");
+                                myRef2.setValue("false");
+
                             }
+
+
+
+
+                            private Integer getProxReservaUsuario(final Integer value){
+                                DatabaseReference db_reserv_user =
+                                        FirebaseDatabase.getInstance().getReference("/usuarios/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+
+                                                "/susreservas/");
+
+                                db_reserv_user.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        List<Long> numsReservas = (List<Long>) dataSnapshot.getValue();
+                                        Integer posicion = numsReservas.size();
+                                        guardaReservaBaseDatos(value, posicion);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        Log.e("DB", "No se ha podido acceder a las reservas del usuario");
+                                    }
+                                });
+
+                                return prox;
+                            }
+
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -179,8 +204,6 @@ public class VerInfoReservaActivity extends AppCompatActivity {
                         Log.e("DB", "No se ha podido acceder a las reservas del usuario");
                     }
                 });
-
-
             }
         });
 
