@@ -25,18 +25,20 @@
 
 
             <Switch
-                android:id="@+id/switch1"
+                android:id="@+id/switchReservas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="Mostrar reservas destacadas" />
+                android:text="Mostrar reservas destacadas"
+                tools:checked="true" />
 
             <Switch
-                android:id="@+id/switch2"
+                android:id="@+id/switchNotificaciones"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="Notificaciones" />
+                android:text="Notificaciones"
+                tools:checked="true" />
         </LinearLayout>
     </ScrollView>
 

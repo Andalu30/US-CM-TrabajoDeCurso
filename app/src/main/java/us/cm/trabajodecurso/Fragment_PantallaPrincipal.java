@@ -27,6 +27,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -79,13 +81,18 @@ public class Fragment_PantallaPrincipal extends Fragment {
         });
 
 
+        //Check ajustes
+        if (MainActivity.getAjustesReservaDestacada())
+            PreparaReservaDestacada();
+        else
+            OcultaReservaDestacada();
+
         //Check login usuario
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (mFirebaseUser == null){
             NoProximoEvento();
         }else{
             PreparaProximaReserva();
-            PreparaReservaDestacada();
         }
 
 
@@ -128,6 +135,14 @@ public class Fragment_PantallaPrincipal extends Fragment {
                 Log.e("DB", "No se ha podido acceder a las reservas del usuario");
             }
         });
+    }
+
+
+    private void OcultaReservaDestacada(){
+        TextView rd = (TextView) getView().findViewById(R.id.txtReservaDestacada);
+        CardView cd = (CardView) getView().findViewById(R.id.cardDestacada);
+        rd.setVisibility(View.GONE);
+        cd.setVisibility(View.GONE);
     }
 
     private void PreparaReservaDestacada(){

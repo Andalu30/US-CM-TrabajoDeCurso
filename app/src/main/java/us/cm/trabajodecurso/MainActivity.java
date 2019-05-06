@@ -2,17 +2,15 @@ package us.cm.trabajodecurso;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.RingtoneManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -37,11 +35,17 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /** Clase principal de la aplicacion. Se encarga de dibujar y gestionar el navigation drawer.
@@ -49,6 +53,10 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
+
+
+    private static Boolean ajustesNotificaciones = true;
+    private static Boolean ajustesreservasdestacadas = true;
 
 
     // Firebase instance variables
@@ -92,7 +100,6 @@ public class MainActivity extends AppCompatActivity
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
 
-
         //Inicialización del contenido del navigation drawer.
 
         View header = navigationView.getHeaderView(0);
@@ -126,6 +133,12 @@ public class MainActivity extends AppCompatActivity
             if (mFirebaseUser.getPhotoUrl() != null) {
                 FirebaseFotoPerfil = mFirebaseUser.getPhotoUrl().toString();
             }
+
+            //Ajustes modifican comportamiento
+            checkOpcionesYactualiza();
+
+
+
         }
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -151,6 +164,53 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
         fotoperfil.setImageBitmap(imagenUsuario);
+
+    }
+
+    private void checkOpcionesYactualiza() {
+        DatabaseReference db_reserv_user = FirebaseDatabase.getInstance().getReference("/usuarios" +
+                "/"+mFirebaseUser.getUid()+"/ajustes/notificaciones");
+
+        db_reserv_user.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Boolean ajuste = (Boolean) dataSnapshot.getValue();
+
+                if (ajuste != MainActivity.getAjustesNotificaciones()) {
+                    MainActivity.setAjustesNotificaciones(false);
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("DB", "No se ha podido acceder a los ajustes del usuario");
+            }
+        });
+
+        DatabaseReference db_reserv_user2 = FirebaseDatabase.getInstance().getReference(
+                "/usuarios" +
+                "/"+mFirebaseUser.getUid()+"/ajustes/reservasDestacadas");
+
+        db_reserv_user2.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Boolean ajuste = (Boolean) dataSnapshot.getValue();
+
+                if (ajuste != MainActivity.getAjustesReservaDestacada()) {
+                    MainActivity.setAjustesreservasdestacadas(false);
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("DB", "No se ha podido acceder a los ajustes del usuario");
+            }
+        });
 
     }
 
@@ -317,6 +377,23 @@ public class MainActivity extends AppCompatActivity
         notificationManager.notify(0, builder.build());
 
 
+    }
+
+
+
+    public static Boolean getAjustesReservaDestacada() {
+        return ajustesreservasdestacadas;
+    }
+    public static Boolean getAjustesNotificaciones() {
+        return ajustesNotificaciones;
+    }
+
+    public static void setAjustesreservasdestacadas(Boolean b) {
+        ajustesreservasdestacadas = b;
+    }
+
+    public static void setAjustesNotificaciones(Boolean b) {
+        ajustesNotificaciones = b;
     }
 
 }
