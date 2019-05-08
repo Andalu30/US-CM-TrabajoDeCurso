@@ -103,107 +103,113 @@ public class VerInfoReservaActivity extends AppCompatActivity {
 
             private void reservarReserva() {
 
+                if (FirebaseAuth.getInstance().getCurrentUser()!= null){
 
-                DatabaseReference db_reserv_user =
-                        FirebaseDatabase.getInstance().getReference("/reservas/");
 
-                db_reserv_user.addListenerForSingleValueEvent(new ValueEventListener() {
+                    DatabaseReference db_reserv_user =
+                            FirebaseDatabase.getInstance().getReference("/reservas/");
 
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        List<Object> numsReservas = (List<Object>) dataSnapshot.getValue();
-                        for (int i = 0; i < numsReservas.size(); i++) {
-                            compruebaReservaNum(i);
+                    db_reserv_user.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            List<Object> numsReservas = (List<Object>) dataSnapshot.getValue();
+                            for (int i = 0; i < numsReservas.size(); i++) {
+                                compruebaReservaNum(i);
+                            }
+
                         }
 
-                    }
+                        private void compruebaReservaNum(final int i) {
+                            DatabaseReference db_reserv_user =
+                                    FirebaseDatabase.getInstance().getReference("/reservas/"+i);
 
-                    private void compruebaReservaNum(final int i) {
-                        DatabaseReference db_reserv_user =
-                                FirebaseDatabase.getInstance().getReference("/reservas/"+i);
+                            db_reserv_user.addValueEventListener(new ValueEventListener() {
 
-                        db_reserv_user.addValueEventListener(new ValueEventListener() {
-
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                                Log.i("DB",map.toString());
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                                    Log.i("DB",map.toString());
 
 
-                                String titulo = (String) map.get("titulo");
-                                String descripcion = (String) map.get("descripcion");
-                                String horario = (String) map.get("horario");
-                                String ubicacion = (String) map.get("ubicacion");
-                                String fecha = (String) map.get("fecha");
-                                String centro = (String) map.get("centro");
-                                String disponibilidad = (String) map.get("disponibilidad");
-                                String tipo = (String) map.get("tipo");
+                                    String titulo = (String) map.get("titulo");
+                                    String descripcion = (String) map.get("descripcion");
+                                    String horario = (String) map.get("horario");
+                                    String ubicacion = (String) map.get("ubicacion");
+                                    String fecha = (String) map.get("fecha");
+                                    String centro = (String) map.get("centro");
+                                    String disponibilidad = (String) map.get("disponibilidad");
+                                    String tipo = (String) map.get("tipo");
 
 
-                                Reserva reserva = new Reserva(titulo, descripcion, horario,ubicacion, fecha, centro, disponibilidad, tipo);
+                                    Reserva reserva = new Reserva(titulo, descripcion, horario,ubicacion, fecha, centro, disponibilidad, tipo);
 
 
-                                if (reserva.equals(reservaIntent)) {
-                                    getProxReservaUsuario(i);
-                                    //guardaReservaBaseDatos(i);
+                                    if (reserva.equals(reservaIntent)) {
+                                        getProxReservaUsuario(i);
+                                        //guardaReservaBaseDatos(i);
+                                    }
+
                                 }
 
-                            }
+                                private void guardaReservaBaseDatos(int value, int pos){
+                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                    DatabaseReference myRef =
+                                            database.getReference("/usuarios/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/susreservas/"+pos);
+                                    myRef.setValue(i);
 
-                            private void guardaReservaBaseDatos(int value, int pos){
-                                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                DatabaseReference myRef =
-                                        database.getReference("/usuarios/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/susreservas/"+pos);
-                                myRef.setValue(i);
+                                    DatabaseReference myRef2 =
+                                            database.getReference("/reservas/"+ value+
+                                                    "/disponibilidad/");
+                                    myRef2.setValue("false");
 
-                                DatabaseReference myRef2 =
-                                        database.getReference("/reservas/"+ value+
-                                                "/disponibilidad/");
-                                myRef2.setValue("false");
-
-                            }
+                                }
 
 
 
 
-                            private Integer getProxReservaUsuario(final Integer value){
-                                DatabaseReference db_reserv_user =
-                                        FirebaseDatabase.getInstance().getReference("/usuarios/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+
-                                                "/susreservas/");
+                                private Integer getProxReservaUsuario(final Integer value){
+                                    DatabaseReference db_reserv_user =
+                                            FirebaseDatabase.getInstance().getReference("/usuarios/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+
+                                                    "/susreservas/");
 
-                                db_reserv_user.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    db_reserv_user.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        List<Long> numsReservas = (List<Long>) dataSnapshot.getValue();
-                                        Integer posicion = numsReservas.size();
-                                        guardaReservaBaseDatos(value, posicion);
-                                    }
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            List<Long> numsReservas = (List<Long>) dataSnapshot.getValue();
+                                            Integer posicion = numsReservas.size();
+                                            guardaReservaBaseDatos(value, posicion);
+                                            finish();
+                                        }
 
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                                        Log.e("DB", "No se ha podido acceder a las reservas del usuario");
-                                    }
-                                });
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            Log.e("DB", "No se ha podido acceder a las reservas del usuario");
+                                        }
+                                    });
 
-                                return prox;
-                            }
-
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                Log.e("DB", "No se ha podido acceder a la informacion de la reserva");
-                            }
-                        });
+                                    return prox;
+                                }
 
 
-                    }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Log.e("DB", "No se ha podido acceder a la informacion de la reserva");
+                                }
+                            });
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.e("DB", "No se ha podido acceder a las reservas del usuario");
-                    }
-                });
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.e("DB", "No se ha podido acceder a las reservas del usuario");
+                        }
+                    });
+                }else{
+                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                }
             }
         });
 
