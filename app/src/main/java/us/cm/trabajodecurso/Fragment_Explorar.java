@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -209,6 +210,7 @@ public class Fragment_Explorar extends Fragment implements MyAdapterReserva.OnRe
         recyclerView.setLayoutManager(layoutManager);
 
         mdatasetReservas.add(reserva);
+        PreparaReservaDestacada();
 
         // specify an adapter (see also next example)
         mAdapter = new MyAdapterReserva(mdatasetReservas,this);
@@ -238,4 +240,33 @@ public class Fragment_Explorar extends Fragment implements MyAdapterReserva.OnRe
         intent.putExtra("datasetreservas", (Serializable) mdatasetReservas);
         getActivity().startActivity(intent);
     }
+
+
+    private void PreparaReservaDestacada(){
+        /**Encargada de preparar la tarjeta de la reserva destacada*/
+        Button btMasinfoDestacada = (Button) getView().findViewById(R.id.bt_mas_infopp);
+
+        TextView titulo = (TextView) getView().findViewById(R.id.titldesta);
+        TextView desc = (TextView) getView().findViewById(R.id.descrResdest);
+        titulo.setText(mdatasetReservas.get(0).getTitulo());
+        desc.setText(mdatasetReservas.get(0).getFecha().getTime().toString());
+
+        btMasinfoDestacada.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onReservaClick: clicked! Posistion: "+0);
+                Log.d(TAG, "onReservaClick: "+ mdatasetReservas.get(0).toString());
+                Intent intent = new Intent(getContext(), VerInfoReservaActivity.class);
+
+                intent.putExtra("reservaSeleccionada", mdatasetReservas.get(0));
+                intent.putExtra("codigoReserva",0);
+                intent.putExtra("datasetreservas", (Serializable) mdatasetReservas);
+                getActivity().startActivity(intent);
+            }
+        });
+
+    }
+
+
+
 }

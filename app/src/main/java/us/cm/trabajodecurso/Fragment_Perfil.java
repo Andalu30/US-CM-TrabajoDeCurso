@@ -44,10 +44,6 @@ public class Fragment_Perfil extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-
-        Switch swNoprox = (Switch) getView().findViewById(R.id.swNoProx);
-        Switch swNoOtras = getView().findViewById(R.id.swNoOtras);
-
         final TextView proxText = (TextView) getView().findViewById(R.id.txProximoEvento);
         final CardView cardProx = (CardView) getView().findViewById(R.id.cardProximoEvento);
 
@@ -59,32 +55,6 @@ public class Fragment_Perfil extends Fragment {
         Button btMisReservas = (Button) getView().findViewById(R.id.bt_verReservas);
         Button btProxReserva = (Button) getView().findViewById(R.id.bt_proxReserva);
 
-        // DEBUG SWITCH
-        swNoOtras.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    otrasText.setVisibility(View.GONE);
-                    otrascard.setVisibility(View.GONE);
-                }else{
-                    otrasText.setVisibility(View.VISIBLE);
-                    otrascard.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-        swNoprox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    proxText.setVisibility(View.GONE);
-                    cardProx.setVisibility(View.GONE);
-                }else{
-                    proxText.setVisibility(View.VISIBLE);
-                    cardProx.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-        // DEBUG SWITCH----
 
 
         btMisReservas.setOnClickListener(new View.OnClickListener() {

@@ -49,6 +49,7 @@
                         android:padding="16dp">
 
                         <TextView
+                            android:id="@+id/titldesta"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
@@ -57,6 +58,7 @@
                             android:textSize="18sp" />
 
                         <TextView
+                            android:id="@+id/descrResdest"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Descripcion de la reserva"

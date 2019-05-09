@@ -1,5 +1,7 @@
 package us.cm.trabajodecurso;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,12 +31,14 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.content.Context.ALARM_SERVICE;
 import static android.support.constraint.Constraints.TAG;
 
 public class Fragment_PantallaPrincipal extends Fragment {
@@ -58,7 +62,6 @@ public class Fragment_PantallaPrincipal extends Fragment {
 
         //Botones de la app
         Button btExplorar = (Button) getView().findViewById(R.id.bt_explorar);
-        Button btMasinfoDestacada = (Button) getView().findViewById(R.id.bt_mas_infopp);
 
         btExplorar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,22 +73,6 @@ public class Fragment_PantallaPrincipal extends Fragment {
             }
         });
 
-        btMasinfoDestacada.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment fragment = new Fragment_Explorar();
-                FragmentManager fragMan = getFragmentManager();
-                FragmentTransaction ft = fragMan.beginTransaction();
-                ft.replace(R.id.screenArea, fragment).addToBackStack("back").commit();
-            }
-        });
-
-
-        //Check ajustes
-        if (MainActivity.getAjustesReservaDestacada())
-            PreparaReservaDestacada();
-        else
-            OcultaReservaDestacada();
 
         //Check login usuario
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -94,6 +81,12 @@ public class Fragment_PantallaPrincipal extends Fragment {
         }else{
             PreparaProximaReserva();
         }
+
+        //Check ajustes
+        if (!MainActivity.getAjustesReservaDestacada()) {
+            OcultaReservaDestacada();
+        }
+
 
 
 
@@ -147,6 +140,26 @@ public class Fragment_PantallaPrincipal extends Fragment {
 
     private void PreparaReservaDestacada(){
         /**Encargada de preparar la tarjeta de la reserva destacada*/
+        Button btMasinfoDestacada = (Button) getView().findViewById(R.id.bt_mas_infopp);
+
+        TextView titulo = (TextView) getView().findViewById(R.id.titdestac);
+        TextView desc = (TextView) getView().findViewById(R.id.descrecomen);
+        titulo.setText(mdatasetReservas.get(0).getTitulo());
+        desc.setText(mdatasetReservas.get(0).getFecha().getTime().toString());
+
+        btMasinfoDestacada.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onReservaClick: clicked! Posistion: "+0);
+                Log.d(TAG, "onReservaClick: "+ mdatasetReservas.get(0).toString());
+                Intent intent = new Intent(getContext(), VerInfoReservaActivity.class);
+
+                intent.putExtra("reservaSeleccionada", mdatasetReservas.get(0));
+                intent.putExtra("codigoReserva",0);
+                intent.putExtra("datasetreservas", (Serializable) mdatasetReservas);
+                getActivity().startActivity(intent);
+            }
+        });
 
     }
 
@@ -190,6 +203,7 @@ public class Fragment_PantallaPrincipal extends Fragment {
 
 
                     mdatasetReservas.add(reserva);
+                    PreparaReservaDestacada();
                     actualizaProximaReserva(); //Llamamos a esta funcion desde aqui porque no se
                     // puede llamar desde otro lugar ya que depende del mdatasetReservas y si no
                     // hay reservas (porque esta funcion es asincrona) seria null y hay errores.
@@ -214,7 +228,7 @@ public class Fragment_PantallaPrincipal extends Fragment {
 
         Button verproxbut = (Button) getView().findViewById(R.id.bt_proxReserva);
 
-
+        Reserva reservaFinal = null;
 
         Calendar aux = Calendar.getInstance();
         aux.set(3000,12,12);
@@ -223,6 +237,7 @@ public class Fragment_PantallaPrincipal extends Fragment {
         for (final Reserva reserva : mdatasetReservas){
             Calendar a = reserva.getFecha();
             if (reserva.getFecha().before(aux) && reserva.getFecha().after(now)){
+                reservaFinal = reserva;
                 aux = reserva.getFecha();
 
                 proxTit.setText(reserva.getTitulo());
@@ -243,6 +258,22 @@ public class Fragment_PantallaPrincipal extends Fragment {
 
             }
         }
+
+//        Calendar horanotif = reservaFinal.getFecha();
+//        horanotif.add(Calendar.MINUTE, -30);
+
+        Log.i(TAG, "actualizaProximaReserva: Comprobando notificacions");
+        Calendar horanotif = Calendar.getInstance();
+        horanotif.add(Calendar.SECOND,10);
+
+        Intent notifintent = new Intent(getContext(), NotificationReceiever.class);
+        notifintent.setAction("MY_NOTIFICATION_MESSAGE");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(),0,notifintent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP,horanotif.getTimeInMillis(),pendingIntent);
+
     }
 
 

@@ -14,8 +14,6 @@
         <activity android:name=".AjustesActivity" />
         <activity android:name=".VerReservaActivity" />
         <activity android:name=".VerInfoReservaActivity" />
-
-
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
@@ -27,5 +25,6 @@
             </intent-filter>
         </activity>
     </application>
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
 
 </manifest>
